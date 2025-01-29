@@ -1,6 +1,8 @@
-# Welcome to your Expo app 👋
+# Welcome to X-MAXXING 👋
 
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+This Project has / is being built for the Gibb Module M306 and M183.
+
 
 ## Get started
 
