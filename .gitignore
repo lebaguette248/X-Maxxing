@@ -1,0 +1,26 @@
+# JetBrains IDEs
+.idea/
+*.iml
+*.iws
+out/
+
+# VSCode
+.vscode/
+*.code-workspace
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+.pnpm-debug.log
+dist/
+build/
+
+# General
+.DS_Store
+Thumbs.db
+.env
+.env.*
+*.log

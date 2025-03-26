@@ -8,4 +8,3 @@ return isMobile;
 };
 
 export default responsiveHelper;
-

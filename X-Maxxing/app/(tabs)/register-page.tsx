@@ -2,12 +2,14 @@ import React, { useState } from "react";
 import { View, TextInput, Button, StyleSheet } from "react-native";
 import responsiveHelper from "@/components/responsive-helper";
 
+
+
 const LoginScreen = ({ navigation }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
   // Check if the screen is a mobile device
-  const isMobile = responsiveHelper();
+  const isMobile = responsiveHelper()
 
   const handleLogin = () => {
     // Add your login logic here
@@ -30,11 +32,15 @@ const LoginScreen = ({ navigation }) => {
           onChangeText={setPassword}
           secureTextEntry
         />
-        <Button color={"#4900C0"} title="Login" onPress={handleLogin} />
-
-        <link href={"/register-page"}>
-          <Button color={"#4900C0"} title="Register" />
-        </link>
+        <Button 
+        color={"#4900C0"}
+        title="Login" 
+        onPress={handleLogin} />
+        <Button
+          color={"#4900C0"}
+          title="Register"
+          onPress={() => navigation.navigate("login-page")}
+        />
       </View>
     </View>
   );
@@ -66,7 +72,7 @@ const styles = StyleSheet.create({
   mobileview: {
     flex: 1,
     backgroundColor: "black",
-  },
+  }
 });
 
 export default LoginScreen;
