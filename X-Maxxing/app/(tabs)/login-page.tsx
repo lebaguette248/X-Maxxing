@@ -2,7 +2,9 @@ import React, { useState } from "react";
 import { View, TextInput, Button, StyleSheet } from "react-native";
 import responsiveHelper from "@/components/responsive-helper";
 
-const LoginScreen = ({ navigation }) => {
+import { NavigationProp } from "@react-navigation/native";
+
+const LoginScreen = ({ navigation }: { navigation: NavigationProp<any> }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
