@@ -9,10 +9,10 @@ import { Link } from "expo-router";
 export default function homepage() {
   return (
     <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
+      headerBackgroundColor={{ light: '#A1CEDC', dark: '#5926de' }}
       headerImage={
         <Image
-          source={require('@/assets/images/partial-react-logo.png')}
+          source={require('@/assets/images/xmaxxing_pattern_transparent_cropped.png')}
           style={styles.reactLogo}
         />
       }>
@@ -68,8 +68,8 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   reactLogo: {
-    height: 178,
-    width: 290,
+    height: "100%",
+    width: "100%",
     bottom: 0,
     left: 0,
     position: 'absolute',
