@@ -1,8 +1,16 @@
 import { Image, StyleSheet, Platform } from 'react-native';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedView } from '@/components/ThemedView';
+import { Button } from 'react-native';
+import { AuthContext } from '@/utils/authContext';
+import { useContext } from 'react';
+import { ThemedText } from '@/components/ThemedText';
+
 
 export default function HomeScreen() {
+
+  const authContext = useContext(AuthContext);
+  
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
@@ -13,6 +21,12 @@ export default function HomeScreen() {
         />
       }>
       <ThemedView style={styles.titleContainer}>
+        <ThemedText> Hello {authContext.loggedAs}
+          
+        </ThemedText>
+      <Button
+          title="Lock out"
+          onPress={authContext.logOut}/>
       </ThemedView>
     </ParallaxScrollView>
   );
