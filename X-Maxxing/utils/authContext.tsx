@@ -40,9 +40,7 @@ export function AuthProvider({children}: PropsWithChildren) {
     }
 
     const logIn = (name:string) => {
-        try{
-            
-        }
+        
         setIsLoggedIn(true);
         setLoggedAs(name);
         storeAuthState({isLoggedIn: true, loggedAs: name});
