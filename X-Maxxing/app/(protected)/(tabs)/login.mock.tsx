@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { View, Text, Button, useColorScheme, TextInput } from "react-native";
 import { AuthContext } from "@/utils/authContext";
 import { StyleSheet } from "react-native";
@@ -8,11 +8,18 @@ import {
   ThemeProvider,
 } from "@react-navigation/native";
 import responsiveHelper from "@/components/responsive-helper";
-import { router, Router } from "expo-router";
+import { Colors } from "@/constants/Colors";
+import { createUser } from "@/database/webApi_operations_manager";
 
 export default function LoginScreen() {
   const authContext = useContext(AuthContext);
   const colorScheme = useColorScheme();
+    const [username, setUsername] = useState("");
+    const [email, setEmail] = useState("");
+
+    const handleCreateUser = () => {
+        createUser(username, email);
+    };
 
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
@@ -20,18 +27,15 @@ export default function LoginScreen() {
         style={!responsiveHelper() ? styles.desktopview : styles.mobileview}
       >
         <View style={styles.container}>
-          <TextInput style={styles.input} placeholder="Username" />
-          <TextInput style={styles.input} placeholder="Password"></TextInput>
-          <Button
-            title="Register"
-            onPress={() => authContext.logIn("")}
-            color={"#F00"}
-          ></Button>
-          <Button
-            title="Have a Account? Log In"
-            onPress={() => router.replace("/login")}
-            color={"#F00"}
-          ></Button>
+          <>
+            <TextInput style={styles.input} placeholder="Username" value={username} onChangeText={setUsername} />
+            <TextInput style={styles.input} placeholder="Email" value={email} onChangeText={setEmail}></TextInput>
+            <Button
+              title="Register"
+              onPress={handleCreateUser}
+              color={Colors.xmaxxingdark.tabIconSelected}
+            ></Button>
+          </>
         </View>
       </View>
     </ThemeProvider>
@@ -63,6 +67,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    maxWidth: 800,
   },
   container: {
     width: "90%",

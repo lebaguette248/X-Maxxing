@@ -41,12 +41,12 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="testtab"
+        name="login.mock"
         options={{
-          title: 'testtab',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
+          title: 'Loginmock',
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="person.fill" color={color} />,
         }}
-      />
+        />
     </Tabs>
   );
 }
