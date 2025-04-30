@@ -23,8 +23,6 @@ export default function ProtectedLayout() {
     SpaceMono: require("../../assets/fonts/SpaceMono-Regular.ttf"),
   });
 
-  
-
   useEffect(() => {
     if (loaded) {
       SplashScreen.hideAsync();
@@ -33,10 +31,6 @@ export default function ProtectedLayout() {
 
   if (!loaded) {
     return null;
-  }
-
-  if (authState.isReady === false) {
-    return null; // Wait for auth state to be ready
   }
 
   //Checks if the authstate is logged in 

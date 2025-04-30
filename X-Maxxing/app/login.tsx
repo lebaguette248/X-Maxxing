@@ -8,13 +8,13 @@ import {
   ThemeProvider,
 } from "@react-navigation/native";
 import responsiveHelper from "@/components/responsive-helper";
+import { router} from "expo-router";
 import { Colors } from "@/constants/Colors";
 
 export default function LoginScreen() {
   const authContext = useContext(AuthContext);
   const colorScheme = useColorScheme();
   const [unameInput, setUnameInput] = useState("");
-  const [mode, setMode] = useState("login");
 
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
@@ -22,54 +22,28 @@ export default function LoginScreen() {
         style={!responsiveHelper() ? styles.desktopview : styles.mobileview}
       >
         <View style={styles.container}>
-        {mode === "login" ? (
-            <>
-              <TextInput
-                style={styles.input}
-                id="unameInput"
-                onChangeText={(text) => setUnameInput(text)}
-                placeholder="Username"
-              />
-              <TextInput
-                style={styles.input}
-                placeholder="Password"
-              ></TextInput>
-              <Button
-                title="Log In"
-                onPress={() => authContext.logIn(unameInput)}
-                color={Colors.xmaxxingdark.tabIconSelected}
-              ></Button>
-              <Button
-                title="No Account yet? Register"
-                // onPress={() => router.replace("/register")}
-                onPress={() => setMode("register")}
-                color={Colors.xmaxxingdark.tabIconSelected}
-              ></Button>
-            </>
-          ) : (
-            <>
-              <TextInput style={styles.input} placeholder="Username" />
-              <TextInput
-                style={styles.input}
-                placeholder="Password"
-              ></TextInput>
-              <Button
-                title="Register"
-                onPress={() => authContext.logIn("")}
-                color={Colors.xmaxxingdark.tabIconSelected}
-              ></Button>
-              <Button
-                title="Have a Account? Log In"
-                onPress={()=> setMode("login")}
-                color={Colors.xmaxxingdark.tabIconSelected}
-              ></Button>
-            </>
-          )}
+          <TextInput style={styles.input} 
+          id="unameInput"
+          onChangeText={(text) => setUnameInput(text)} 
+          placeholder="Username" />
+          <TextInput style={styles.input} placeholder="Password"></TextInput>
+          <Button
+            title="Log In"
+            onPress={() => authContext.logIn(unameInput)}
+            color={"#F00"}
+          ></Button>
+          <Button
+            title="No Account yet? Register" 
+            onPress={() => router.replace("/register")}
+            color={Colors.xmaxxingdark.tintColorDark}
+          ></Button>
         </View>
       </View>
     </ThemeProvider>
   );
 }
+
+
 
 const styles = StyleSheet.create({
   button: {
