@@ -21,7 +21,7 @@ export default function HomeScreen() {
         />
       }>
       <ThemedView style={styles.titleContainer}>
-        <ThemedText> Hello {authContext.loggedAs}
+        <ThemedText> Hello {authContext.loggedInUser}
           
         </ThemedText>
       <Button

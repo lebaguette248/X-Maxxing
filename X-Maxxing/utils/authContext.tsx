@@ -1,83 +1,120 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { router } from 'expo-router';
-import React, { createContext, PropsWithChildren, useContext, useEffect, useState } from 'react';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { router } from "expo-router";
+import { Alert } from "react-native";
+import React, {
+  createContext,
+  PropsWithChildren,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 
 //Definiert neuer Typ in Typescript
 type Authstate = {
-    isLoggedIn: boolean;
-    logIn: (name: string) => void;
-    logOut: () => void;
-    isReady: boolean;
+  isLoggedIn: boolean;
+  logIn: (username: string, password: string) => void;
+  logOut: () => void;
+  isReady: boolean;
 
-    loggedAs: string;
-}
+  loggedInUser: string;
+  loggedInUserId: string;
+  loggedInUserEmail: string;
+};
 
 const authStrogeKey = "auth-key";
+const API_URL = process.env.EXPO_PUBLIC_XM_URL + "/auth/login"; // SET IN .ENV FILE MANNNN
+
 
 //Verwendung von Typ für Constante AuthContext, welche einen Context mit Authstate erstellt
-export const AuthContext = createContext<Authstate>(
-    {
-        isLoggedIn: false,
-        isReady: false,
-        logIn: () => {},
-        logOut: () => {},
-        loggedAs: "",
+export const AuthContext = createContext<Authstate>({
+  isLoggedIn: false,
+  isReady: false,
+  logIn: () => {},
+  logOut: () => {},
+  loggedInUser: "",
+  loggedInUserId: "",
+  loggedInUserEmail: "",
+});
+
+export function AuthProvider({ children }: PropsWithChildren) {
+  const [isReady, setIsReady] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [loggedInUser, setloggedInUser] = useState("");
+  const [loggedInUserId, setloggedInUserId] = useState("");
+  const [loggedInUserEmail, setloggedInUserEmail] = useState("");
+
+  const storeAuthState = async (newState: {
+    isLoggedIn: boolean;
+    loggedInUser: string;
+    loggedInUserEmail?: string;
+  }) => {
+    try {
+      const jsonValue = JSON.stringify(newState);
+      await AsyncStorage.setItem(authStrogeKey, jsonValue);
+    } catch (e) {
+      console.error("Error storing auth state", e);
     }
-);
+  };
 
-export function AuthProvider({children}: PropsWithChildren) {
-    const [isReady, setIsReady] = useState(false);
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [loggedAs, setLoggedAs] = useState("");
-    const storeAuthState = async (newState: { isLoggedIn: boolean; loggedAs: string }) => {
-        try {
-            const jsonValue = JSON.stringify(newState);
-            await AsyncStorage.setItem(authStrogeKey, jsonValue);
+  const logIn = async (username: string, password: string) => {
+    try {
+      const res = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password }),
+      }); 
 
-        } catch (e) {
-            console.error("Error storing auth state", e);
+      if (!res.ok) {
+        throw new Error("Invalid username or password");
+      }
+
+      const data = await res.json(); // { id, username, email } if your backend returns it
+
+      setIsLoggedIn(true);
+      setloggedInUser(data.username);
+      setloggedInUserId(data.id);
+      setloggedInUserEmail(data.email);
+      await storeAuthState({
+        isLoggedIn: true,
+        loggedInUser: data.username,
+        loggedInUserEmail: data.email,
+      });
+
+      router.replace("/");
+    } catch (e) {
+      console.error("Error logging in", e);
+      Alert.alert("Login Failed", "Invalid username or password.");
+    }
+  };
+
+  const logOut = () => {
+    setIsLoggedIn(false);
+    setloggedInUser("");
+    storeAuthState({ isLoggedIn: false, loggedInUser: "" });
+    router.replace("/login");
+  };
+
+  useEffect(() => {
+    const getAuthFromStorage = async () => {
+      try {
+        const value = await AsyncStorage.getItem(authStrogeKey);
+        if (value !== null) {
+          const auth = JSON.parse(value);
+          setIsLoggedIn(auth.isLoggedIn);
         }
-    }
+      } catch (e) {
+        console.error("Error getting auth state", e);
+      }
+      setIsReady(true);
+    };
+    getAuthFromStorage();
+  }, []);
 
-    const logIn = (name:string) => {
-        try{
-            
-        }
-        setIsLoggedIn(true);
-        setLoggedAs(name);
-        storeAuthState({isLoggedIn: true, loggedAs: name});
-        router.replace("/");
-        
-    }
-
-    const logOut = () => {
-        setIsLoggedIn(false);
-        setLoggedAs("");
-        storeAuthState({isLoggedIn: false, loggedAs: ""});
-        router.replace("/login");
-    }
-
-    useEffect(() => {
-        const getAuthFromStorage = async () => {
-            try {
-                const value = await AsyncStorage.getItem(authStrogeKey);
-                if(value !== null) {
-                    const auth = JSON.parse(value);
-                    setIsLoggedIn(auth.isLoggedIn);
-
-                }
-            } catch (e) {
-                console.error("Error getting auth state", e);
-            }
-            setIsReady(true);
-        }
-        getAuthFromStorage();
-    }, []);
-
-    return (
-        <AuthContext.Provider value={{isLoggedIn, logIn, logOut, loggedAs, isReady}}>
-            {children}
-        </AuthContext.Provider>
-    );
+  return (
+    <AuthContext.Provider
+      value={{ isLoggedIn, logIn, logOut, loggedInUser, loggedInUserEmail,loggedInUserId, isReady }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
 }
-
