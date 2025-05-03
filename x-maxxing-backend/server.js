@@ -96,18 +96,24 @@ app.post("/auth/login", (req, res) => {
   );
 });
 
-// Create a goal
+
 app.post("/goals", (req, res) => {
   const { user_id, title, description } = req.body;
+
+  if (!user_id || !title) {
+    return res.status(400).json({ error: "user_id and title are required" });
+  }
+
   db.query(
     `INSERT INTO Goals (user_id, title, description) VALUES (?, ?, ?)`,
-    [user_id, title, description],
+    [user_id, title, description || null],
     (err, results) => {
-      if (err) return res.status(400).json({ error: err.message });
-      res.json({ id: results.insertId });
+      if (err) return res.status(500).json({ error: err.message });
+      res.json({ id: results.insertId, message: "Goal created" });
     }
   );
 });
+
 
 // Create a step
 app.post("/steps", (req, res) => {
@@ -161,6 +167,8 @@ app.get("/users/:userId/goals", (req, res) => {
     }
   );
 });
+
+
 
 // Start the server
 app.listen(PORT, () => {

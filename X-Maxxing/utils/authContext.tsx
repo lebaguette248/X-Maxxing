@@ -17,7 +17,7 @@ type Authstate = {
   isReady: boolean;
 
   loggedInUser: string;
-  loggedInUserId: string;
+  loggedInUserId: number;
   loggedInUserEmail: string;
 };
 
@@ -32,7 +32,7 @@ export const AuthContext = createContext<Authstate>({
   logIn: () => {},
   logOut: () => {},
   loggedInUser: "",
-  loggedInUserId: "",
+  loggedInUserId: 0,
   loggedInUserEmail: "",
 });
 
@@ -47,6 +47,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
     isLoggedIn: boolean;
     loggedInUser: string;
     loggedInUserEmail?: string;
+    loggedInUserId?: string;
   }) => {
     try {
       const jsonValue = JSON.stringify(newState);
@@ -68,7 +69,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
         throw new Error("Invalid username or password");
       }
 
-      const data = await res.json(); // { id, username, email } if your backend returns it
+      const data = await res.json(); // { id, username, email }
 
       setIsLoggedIn(true);
       setloggedInUser(data.username);
@@ -78,8 +79,8 @@ export function AuthProvider({ children }: PropsWithChildren) {
         isLoggedIn: true,
         loggedInUser: data.username,
         loggedInUserEmail: data.email,
+        loggedInUserId: data.id,
       });
-
       router.replace("/");
     } catch (e) {
       console.error("Error logging in", e);
@@ -90,7 +91,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
   const logOut = () => {
     setIsLoggedIn(false);
     setloggedInUser("");
-    storeAuthState({ isLoggedIn: false, loggedInUser: "" });
+    storeAuthState({ isLoggedIn: false, loggedInUser: "", loggedInUserEmail });
     router.replace("/login");
   };
 
@@ -101,6 +102,9 @@ export function AuthProvider({ children }: PropsWithChildren) {
         if (value !== null) {
           const auth = JSON.parse(value);
           setIsLoggedIn(auth.isLoggedIn);
+          setloggedInUser(auth.loggedInUser);
+          setloggedInUserEmail(auth.loggedInUserEmail);
+          setloggedInUserId(auth.loggedInUserId);
         }
       } catch (e) {
         console.error("Error getting auth state", e);
