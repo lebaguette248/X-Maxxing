@@ -1,7 +1,7 @@
 const API_URL = process.env.EXPO_PUBLIC_XM_URL;
 
 export async function createGoal(
-  userId: number,
+  userId: Number,
   title: string,
   description?: string
 ) {
@@ -26,7 +26,7 @@ export async function createGoal(
   }
 }
 
-export async function getGoals(userId: number) {
+export async function getGoals(userId: Number) {
   try {
     const res = await fetch(`${API_URL}/goals/${userId}`, {
       method: "GET",

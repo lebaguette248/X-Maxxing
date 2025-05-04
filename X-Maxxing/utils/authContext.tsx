@@ -17,7 +17,7 @@ type Authstate = {
   isReady: boolean;
 
   loggedInUser: string;
-  loggedInUserId: number;
+  loggedInUserId: Number;
   loggedInUserEmail: string;
 };
 
@@ -40,14 +40,14 @@ export function AuthProvider({ children }: PropsWithChildren) {
   const [isReady, setIsReady] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loggedInUser, setloggedInUser] = useState("");
-  const [loggedInUserId, setloggedInUserId] = useState("");
+  const [loggedInUserId, setloggedInUserId] = useState(0);
   const [loggedInUserEmail, setloggedInUserEmail] = useState("");
 
   const storeAuthState = async (newState: {
     isLoggedIn: boolean;
     loggedInUser: string;
     loggedInUserEmail?: string;
-    loggedInUserId?: string;
+    loggedInUserId?: Number;
   }) => {
     try {
       const jsonValue = JSON.stringify(newState);
@@ -116,7 +116,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
 
   return (
     <AuthContext.Provider
-      value={{ isLoggedIn, logIn, logOut, loggedInUser, loggedInUserEmail,loggedInUserId, isReady }}
+      value={{ isLoggedIn, logIn, logOut, loggedInUser, loggedInUserEmail,loggedInUserId , isReady }}
     >
       {children}
     </AuthContext.Provider>

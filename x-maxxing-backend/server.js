@@ -96,7 +96,6 @@ app.post("/auth/login", (req, res) => {
   );
 });
 
-
 app.post("/goals", (req, res) => {
   const { user_id, title, description } = req.body;
 
@@ -114,6 +113,20 @@ app.post("/goals", (req, res) => {
   );
 });
 
+app.get("/goals/:userId", (req, res) => {
+  const userId = req.params.userId;
+
+  db.query(
+    "SELECT * FROM Goals WHERE user_id = ?",
+    [userId],
+    (err, results) => {
+      if (err) {
+        return res.status(500).json({ error: err.message });
+      }
+      res.json(results);
+    }
+  );
+});
 
 // Create a step
 app.post("/steps", (req, res) => {
@@ -167,8 +180,6 @@ app.get("/users/:userId/goals", (req, res) => {
     }
   );
 });
-
-
 
 // Start the server
 app.listen(PORT, () => {

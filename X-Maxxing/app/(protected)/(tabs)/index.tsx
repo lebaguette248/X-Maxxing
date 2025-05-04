@@ -1,5 +1,5 @@
 import { Image, Modal, StyleSheet, ScrollView } from "react-native";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedView } from "@/components/ThemedView";
 import { Button } from "react-native";
@@ -8,30 +8,32 @@ import { useContext } from "react";
 import { ThemedText } from "@/components/ThemedText";
 import { TextInput } from "react-native-gesture-handler";
 import { BlurredModal } from "@/components/blurModalComponent";
-import { createGoal } from "@/utils/goalManager";
+import { createGoal, getGoals } from "@/utils/goalManager";
 import GoalBox from "@/components/goalComponent";
+import { reload } from "expo-router/build/global-state/routing";
 
 export default function HomeScreen() {
+
   const authContext = useContext(AuthContext);
   const [modalVisible, setModalVisible] = useState(false);
 
   const [goalInput, setGoalInput] = useState("");
   const [descriptionInput, setDescriptionInput] = useState("");
 
-  const GoalsList: React.FC = () => {
-    const allMyGoals = [
-      {
-        id: 1,
-        title: "Learn React Native",
-        description: "Complete the official tutorial.",
-      },
-      {
-        id: 2,
-        title: "Build a Portfolio App",
-        description: "Showcase my projects.",
-      },
-      // Add more goals as needed
-    ];
+  console.log("HomeScreen");
+  console.log("Logged in user: ", authContext.loggedInUser, authContext.loggedInUserId);
+  console.log("Logged in user email: ", authContext.loggedInUserEmail);
+  console.log("Logged in user is logged in: ", authContext.isLoggedIn);
+  
+  const [goals, setGoals] = useState([]);
+  
+  useEffect(() => {
+    const fetchGoals = async () => {
+      const fetchedGoals = await getGoals(authContext.loggedInUserId);
+      setGoals(fetchedGoals);
+    };
+    fetchGoals();
+  }, [authContext.loggedInUserId]);
 
     return (
       <ParallaxScrollView
@@ -70,7 +72,6 @@ export default function HomeScreen() {
               onChangeText={(text) => setDescriptionInput(text)}
               placeholder="Description"
             ></TextInput>
-
             <Button
               title="Cancel"
               onPress={() => {
@@ -90,10 +91,18 @@ export default function HomeScreen() {
             />
           </ThemedView>
         </BlurredModal>
+        <ThemedView style={styles.goalsSection}>
+          <ThemedText style={styles.sectionTitle}>Your Goals</ThemedText>
+          {goals.map((goal, index) => (
+            <ThemedView key={index} style={styles.goalItem}>
+              <ThemedText style={styles.goalTitle}>{goal.title}</ThemedText>
+              <ThemedText style={styles.goalDescription}>{goal.description}</ThemedText>
+            </ThemedView>
+          ))}
+        </ThemedView>
       </ParallaxScrollView>
     );
   };
-}
 
 export const styles = StyleSheet.create({
   titleContainer: {
@@ -129,5 +138,31 @@ export const styles = StyleSheet.create({
     fontSize: 16,
     color: "rgb(163, 163, 163)",
     backgroundColor: "rgba(255, 255, 255, 0.1)",
+  },
+  goalsSection: {
+    padding: 16,
+    marginTop: 12,
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 16,
+  },
+  goalItem: {
+    padding: 16,
+    marginBottom: 12,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#ddd",
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
+  },
+  goalTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 8,
+  },
+  goalDescription: {
+    fontSize: 14,
+    color: "rgb(120, 120, 120)",
   },
 });
