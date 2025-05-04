@@ -1,5 +1,12 @@
 const API_URL = process.env.EXPO_PUBLIC_XM_URL;
 
+
+export interface Goal {
+  id: string;
+  title: string;
+  description: string;
+}
+
 export async function createGoal(
   userId: Number,
   title: string,
@@ -42,5 +49,74 @@ export async function getGoals(userId: Number) {
     console.error("Error fetching goals:", error);
   }
 }
+
+export async function deleteGoal(goalId: Number) {
+  try {
+    const res = await fetch(`${API_URL}/goals/${goalId}`, {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+    });
+
+    if (!res.ok) throw new Error("Failed to delete goal");
+
+    const data = await res.json();
+    console.log("Goal deleted:", data);
+    return data;
+  } catch (error) {
+    console.error("Error deleting goal:", error);
+  }
+}
+
+export async function getSubgoals(goalId: Number) {
+  try {
+    const res = await fetch(`${API_URL}/subgoals/${goalId}`);
+    if (!res.ok) throw new Error("Failed to fetch subgoals");
+    const data = await res.json();
+    return data; // Array of subgoals
+  } catch (error) {
+    console.error("Error fetching subgoals:", error);
+    return [];
+  }
+}
+
+export async function deleteSubgoal(subgoalId: Number) {
+  try {
+    const res = await fetch(`${API_URL}/subgoals/${subgoalId}`, {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+    });
+
+    if (!res.ok) throw new Error("Failed to delete subgoal");
+
+    const data = await res.json();
+    console.log("Subgoal deleted:", data);
+    return data;
+  } catch (error) {
+    console.error("Error deleting subgoal:", error);
+  }
+}
+
+export async function createSubgoal(goalId: number, title: string, description: string) {
+  try {
+    const res = await fetch(`${API_URL}/subgoals`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        goal_id: goalId,
+        title,
+        description,
+      }),
+    });
+
+    if (!res.ok) throw new Error('Failed to create subgoal');
+    const data = await res.json();
+    return data;
+  } catch (error) {
+    console.error('Error creating subgoal:', error);
+    return null;
+  }
+}
+
+
 
 

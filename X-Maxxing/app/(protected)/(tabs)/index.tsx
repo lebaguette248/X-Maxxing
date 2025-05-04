@@ -1,4 +1,4 @@
-import { Image, Modal, StyleSheet, ScrollView } from "react-native";
+import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
 import { useState, useEffect } from "react";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedView } from "@/components/ThemedView";
@@ -8,12 +8,10 @@ import { useContext } from "react";
 import { ThemedText } from "@/components/ThemedText";
 import { TextInput } from "react-native-gesture-handler";
 import { BlurredModal } from "@/components/blurModalComponent";
-import { createGoal, getGoals } from "@/utils/goalManager";
-import GoalBox from "@/components/goalComponent";
-import { reload } from "expo-router/build/global-state/routing";
+import { createGoal, getGoals, Goal } from "@/utils/goalManager";
+import { router} from "expo-router";
 
 export default function HomeScreen() {
-
   const authContext = useContext(AuthContext);
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -21,12 +19,19 @@ export default function HomeScreen() {
   const [descriptionInput, setDescriptionInput] = useState("");
 
   console.log("HomeScreen");
-  console.log("Logged in user: ", authContext.loggedInUser, authContext.loggedInUserId);
+  console.log(
+    "Logged in user: ",
+    authContext.loggedInUser,
+    authContext.loggedInUserId
+  );
   console.log("Logged in user email: ", authContext.loggedInUserEmail);
   console.log("Logged in user is logged in: ", authContext.isLoggedIn);
-  
-  const [goals, setGoals] = useState([]);
-  
+  console.log("goals: ", getGoals(authContext.loggedInUserId));
+
+
+
+  const [goals, setGoals] = useState<Goal[]>([]);
+
   useEffect(() => {
     const fetchGoals = async () => {
       const fetchedGoals = await getGoals(authContext.loggedInUserId);
@@ -35,74 +40,76 @@ export default function HomeScreen() {
     fetchGoals();
   }, [authContext.loggedInUserId]);
 
-    return (
-      <ParallaxScrollView
-        headerBackgroundColor={{ light: "#A1CEDC", dark: "#1D3D47" }}
-        headerImage={
-          <Image
-            source={require("@/assets/images/partial-react-logo.png")}
-            style={styles.reactLogo}
-          />
-        }
-      >
-        <ThemedView style={styles.titleContainer}>
-          <ThemedText> Hello {authContext.loggedInUser}</ThemedText>
-          <Button title="Lock out" onPress={authContext.logOut} />
-          <Button
-            title="Create new Goal"
-            onPress={() => setModalVisible(true)}
-          />
-        </ThemedView>
+  return (
+    <ParallaxScrollView
+      headerBackgroundColor={{ light: "#A1CEDC", dark: "#1D3D47" }}
+      headerImage={
+        <Image
+          source={require("@/assets/images/partial-react-logo.png")}
+          style={styles.reactLogo}
+        />
+      }
+    >
+      <ThemedView style={styles.titleContainer}>
+        <ThemedText> Hello {authContext.loggedInUser}</ThemedText>
+        <Button title="Lock out" onPress={authContext.logOut} />
+        <Button title="Create new Goal" onPress={() => setModalVisible(true)} />
+      </ThemedView>
 
-        <BlurredModal /* create a new goal */
-          visible={modalVisible}
-          onRequestClose={() => {
-            setModalVisible(false);
-          }}
-        >
-          <ThemedView style={styles.modalContainer}>
-            <ThemedText>This is a modal!</ThemedText>
-            <TextInput
-              style={styles.input}
-              onChangeText={(text) => setGoalInput(text)}
-              placeholder="Goal"
-            ></TextInput>
-            <TextInput
-              style={styles.input}
-              onChangeText={(text) => setDescriptionInput(text)}
-              placeholder="Description"
-            ></TextInput>
-            <Button
-              title="Cancel"
-              onPress={() => {
-                setModalVisible(false);
-              }}
-            />
-            <Button
-              title="Create"
-              onPress={() => {
-                setModalVisible(false);
-                createGoal(
-                  authContext.loggedInUserId,
-                  goalInput,
-                  descriptionInput
-                );
-              }}
-            />
-          </ThemedView>
-        </BlurredModal>
-        <ThemedView style={styles.goalsSection}>
-          <ThemedText style={styles.sectionTitle}>Your Goals</ThemedText>
-          {goals.map((goal, index) => (
-            <ThemedView key={index} style={styles.goalItem}>
-              <ThemedText style={styles.goalTitle}>{goal.title}</ThemedText>
-              <ThemedText style={styles.goalDescription}>{goal.description}</ThemedText>
-            </ThemedView>
-          ))}
+      <BlurredModal /* create a new goal */
+        visible={modalVisible}
+        onRequestClose={() => {
+          setModalVisible(false);
+        }}
+      >
+        <ThemedView style={styles.modalContainer}>
+          <ThemedText>This is a modal!</ThemedText>
+          <TextInput
+            style={styles.input}
+            onChangeText={(text) => setGoalInput(text)}
+            placeholder="Goal"
+          ></TextInput>
+          <TextInput
+            style={styles.input}
+            onChangeText={(text) => setDescriptionInput(text)}
+            placeholder="Description"
+          ></TextInput>
+          <Button
+            title="Cancel"
+            onPress={() => {
+              setModalVisible(false);
+            }}
+          />
+          <Button
+            title="Create"
+            onPress={() => {
+              setModalVisible(false);
+              createGoal(
+                authContext.loggedInUserId,
+                goalInput,
+                descriptionInput
+              );
+            }}
+          />
         </ThemedView>
-      </ParallaxScrollView>
-    );
-  };
+      </BlurredModal>
+
+      <ThemedView style={styles.goalsSection}>
+        <ThemedText style={styles.sectionTitle}>Your Goals</ThemedText>
+        {goals.map((goal, index) => (
+          <TouchableOpacity onPress={() => router.push(`/subgoals/${goal.id}`)}>
+            <View key={index} style={styles.goalItem}>
+              <ThemedText style={styles.goalTitle}>{goal.title}</ThemedText>
+              <ThemedText style={styles.goalDescription}>
+                {goal.description}
+              </ThemedText>
+            </View>
+          </TouchableOpacity>
+        ))}
+      </ThemedView>
+    </ParallaxScrollView>
+  );
+}
 
 export const styles = StyleSheet.create({
   titleContainer: {

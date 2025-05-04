@@ -141,6 +141,33 @@ app.post("/steps", (req, res) => {
   );
 });
 
+// GET subgoals by goal ID
+app.get('/subgoals/:goalId', (req, res) => {
+  const goalId = req.params.goalId;
+  db.query('SELECT * FROM Steps WHERE goal_id = ?', [goalId], (err, results) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json(results);
+  });
+});
+
+app.post('/subgoals', (req, res) => {
+  const { goal_id, title, description } = req.body;
+  if (!goal_id || !title) {
+    return res.status(400).json({ error: 'Missing required fields' });
+  }
+
+  db.query(
+    'INSERT INTO Steps (goal_id, title, description) VALUES (?, ?, ?)',
+    [goal_id, title, description],
+    (err, results) => {
+      if (err) return res.status(500).json({ error: err.message });
+      res.json({ id: results.insertId, message: 'Subgoal created successfully' });
+    }
+  );
+});
+
+
+
 // Get goals and steps for a user
 app.get("/users/:userId/goals", (req, res) => {
   const userId = req.params.userId;
