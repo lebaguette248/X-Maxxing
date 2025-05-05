@@ -57,6 +57,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
     }
   };
 
+
   const logIn = async (username: string, password: string) => {
     try {
       const res = await fetch(API_URL, {
@@ -68,6 +69,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
       if (!res.ok) {
         throw new Error("Invalid username or password");
       }
+
 
       const data = await res.json(); // { id, username, email }
 
