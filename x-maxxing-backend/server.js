@@ -1,6 +1,6 @@
-const express = require('express');
-const mysql = require('mysql2');
-const cors = require('cors');
+const express = require("express");
+const mysql = require("mysql2");
+const cors = require("cors");
 
 const app = express();
 const PORT = 3000;
@@ -11,15 +11,15 @@ app.use(express.json());
 
 // MySQL Connection
 const db = mysql.createConnection({
-  host: 'localhost',
-  user: 'xmaxxing_manager',
-  password: 'nickyyy', // BEISPIEL
-  database: 'xmaxxing_db'
+  host: "localhost",
+  user: "xmaxxing_manager",
+  password: "nickyyy", // BEISPIEL
+  database: "xmaxxing_db",
 });
 
-db.connect(err => {
+db.connect((err) => {
   if (err) throw err;
-  console.log('Connected to MySQL Database');
+  console.log("Connected to MySQL Database");
 });
 
 // Create tables if they don't exist
@@ -28,6 +28,7 @@ db.query(`
     id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(255) NOT NULL UNIQUE,
     email VARCHAR(255) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL UNIQUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
   )
 `);
@@ -56,87 +57,146 @@ db.query(`
 // API Endpoints
 
 // Create a user
-app.post('/users', (req, res) => {
-  const { username, email } = req.body;
-  db.query(`INSERT INTO Users (username, email) VALUES (?, ?)`, [username, email], (err, results) => {
-    if (err) return res.status(400).json({ error: err.message });
-    res.json({ id: results.insertId, resp: 'User created successfully' });
-  });
-});
+app.post("/users", (req, res) => {
+  const { username, email, password } = req.body;
 
-// Authenticate user by username and password
-app.post('/auth/login', (req, res) => {
-  const { username, password } = req.body;
-  
+  if (!username || !email || !password) {
+    return res
+      .status(400)
+      .json({ error: "Missing username, email or password" });
+  }
+
   db.query(
-    'SELECT * FROM Users WHERE username = ? AND password = ?',
-    [username, password],
+    `INSERT INTO Users (username, email, password) VALUES (?, ?, ?)`,
+    [username, email, password],
     (err, results) => {
-      if (err) return res.status(500).json({ error: err.message });
-      if (results.length === 0) {
-        return res.status(401).json({ error: 'Invalid credentials' });
-      }
+      if (err) return res.status(400).json({ error: err.message });
 
-      const user = results[0];
-      res.json({ id: user.id, username: user.username });
+      res.json({ id: results.insertId, resp: "User created successfully" });
     }
   );
 });
 
+// Authenticate user by username and password
+app.post("/auth/login", (req, res) => {
+  const { username, password } = req.body;
 
-// Create a goal
-app.post('/goals', (req, res) => {
+  db.query(
+    "SELECT * FROM Users WHERE username = ? AND password = ?",
+    [username, password],
+    (err, results) => {
+      if (err) return res.status(500).json({ error: err.message });
+      if (results.length === 0) {
+        return res.status(401).json({ error: "Invalid credentials" });
+      }
+
+      const user = results[0];
+      res.json({ id: user.id, username: user.username, email: user.email });
+    }
+  );
+});
+
+app.post("/goals", (req, res) => {
   const { user_id, title, description } = req.body;
-  db.query(`INSERT INTO Goals (user_id, title, description) VALUES (?, ?, ?)`, [user_id, title, description], (err, results) => {
-    if (err) return res.status(400).json({ error: err.message });
-    res.json({ id: results.insertId });
-  });
+
+  if (!user_id || !title) {
+    return res.status(400).json({ error: "user_id and title are required" });
+  }
+
+  db.query(
+    `INSERT INTO Goals (user_id, title, description) VALUES (?, ?, ?)`,
+    [user_id, title, description || null],
+    (err, results) => {
+      if (err) return res.status(500).json({ error: err.message });
+      res.json({ id: results.insertId, message: "Goal created" });
+    }
+  );
+});
+
+app.get("/goals/:userId", (req, res) => {
+  const userId = req.params.userId;
+
+  db.query(
+    "SELECT * FROM Goals WHERE user_id = ?",
+    [userId],
+    (err, results) => {
+      if (err) {
+        return res.status(500).json({ error: err.message });
+      }
+      res.json(results);
+    }
+  );
 });
 
 // Create a step
-app.post('/steps', (req, res) => {
+app.post("/subgoals", (req, res) => {
   const { goal_id, title, description } = req.body;
-  db.query(`INSERT INTO Steps (goal_id, title, description) VALUES (?, ?, ?)`, [goal_id, title, description], (err, results) => {
-    if (err) return res.status(400).json({ error: err.message });
-    res.json({ id: results.insertId });
+  db.query(
+    `INSERT INTO Steps (goal_id, title, description) VALUES (?, ?, ?)`,
+    [goal_id, title, description],
+    (err, results) => {
+      if (err) return res.status(400).json({ error: err.message });
+      res.json({ id: results.insertId });
+    }
+  );
+});
+
+// GET subgoals by goal ID
+app.get('/subgoals/:goalId', (req, res) => {
+  const goalId = req.params.goalId;
+  db.query('SELECT * FROM Steps WHERE goal_id = ?', [goalId], (err, results) => {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json(results);
   });
 });
 
-// Get goals and steps for a user
-app.get('/users/:userId/goals', (req, res) => {
-  const userId = req.params.userId;
-  db.query(`
-    SELECT Goals.id AS goalId, Goals.title AS goalTitle, Goals.description AS goalDescription,
-           Steps.id AS stepId, Steps.title AS stepTitle, Steps.description AS stepDescription, Steps.is_completed
-    FROM Goals
-    LEFT JOIN Steps ON Goals.id = Steps.goal_id
-    WHERE Goals.user_id = ?
-  `, [userId], (err, rows) => {
-    if (err) return res.status(400).json({ error: err.message });
+app.post('/subgoals', (req, res) => {
+  const { goal_id, title, description } = req.body;
+  if (!goal_id || !title) {
+    return res.status(400).json({ error: 'Missing required fields' });
+  }
 
-    const goals = {};
-    rows.forEach(row => {
-      if (!goals[row.goalId]) {
-        goals[row.goalId] = {
-          id: row.goalId,
-          title: row.goalTitle,
-          description: row.goalDescription,
-          steps: []
-        };
-      }
-      if (row.stepId) {
-        goals[row.goalId].steps.push({
-          id: row.stepId,
-          title: row.stepTitle,
-          description: row.stepDescription,
-          is_completed: !!row.is_completed
-        });
-      }
-    });
+  db.query(
+    'INSERT INTO Steps (goal_id, title, description) VALUES (?, ?, ?)',
+    [goal_id, title, description],
+    (err, results) => {
+      if (err) return res.status(500).json({ error: err.message });
+      res.json({ id: results.insertId, message: 'Subgoal created successfully' });
+    }
+  );
+});
 
-    res.json(Object.values(goals));
+app.get('/goalsbyId/:id', (req, res) => {
+  const goalId = req.params.id;
+
+  db.query('SELECT * FROM Goals WHERE id = ?', [goalId], (err, results) => {
+    if (err) return res.status(500).json({ error: err.message });
+
+    if (results.length === 0) {
+      return res.status(404).json({ message: 'Goal not found' });
+    }
+
+    res.json(results[0]);
   });
 });
+
+app.delete('/subgoals/:id', (req, res) => {
+  const stepId = req.params.id;
+
+  db.query('DELETE FROM Steps WHERE id = ?', [stepId], (err, result) => {
+    if (err) return res.status(500).json({ error: err.message });
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'Step not found' });
+    }
+
+    res.json({ message: `Step ${stepId} deleted successfully.` });
+  });
+});
+
+
+
+
 
 // Start the server
 app.listen(PORT, () => {

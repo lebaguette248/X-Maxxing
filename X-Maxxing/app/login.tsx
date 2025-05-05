@@ -14,6 +14,8 @@ export default function LoginScreen() {
   const authContext = useContext(AuthContext);
   const colorScheme = useColorScheme();
   const [unameInput, setUnameInput] = useState("");
+  const [passwordInput, setPasswordInput] = useState("");
+
   const [mode, setMode] = useState("login");
 
   return (
@@ -33,10 +35,11 @@ export default function LoginScreen() {
               <TextInput
                 style={styles.input}
                 placeholder="Password"
+                onChangeText={(text) => setPasswordInput(text)}
               ></TextInput>
               <Button
                 title="Log In"
-                onPress={() => authContext.logIn(unameInput)}
+                onPress={() => authContext.logIn(unameInput, passwordInput)}
                 color={Colors.xmaxxingdark.tabIconSelected}
               ></Button>
               <Button
@@ -55,7 +58,7 @@ export default function LoginScreen() {
               ></TextInput>
               <Button
                 title="Register"
-                onPress={() => authContext.logIn("")}
+                onPress={() => authContext.logIn("unameInput", "passwordInput")}
                 color={Colors.xmaxxingdark.tabIconSelected}
               ></Button>
               <Button
