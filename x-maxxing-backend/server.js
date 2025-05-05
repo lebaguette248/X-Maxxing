@@ -129,7 +129,7 @@ app.get("/goals/:userId", (req, res) => {
 });
 
 // Create a step
-app.post("/steps", (req, res) => {
+app.post("/subgoals", (req, res) => {
   const { goal_id, title, description } = req.body;
   db.query(
     `INSERT INTO Steps (goal_id, title, description) VALUES (?, ?, ?)`,
@@ -166,47 +166,37 @@ app.post('/subgoals', (req, res) => {
   );
 });
 
+app.get('/goalsbyId/:id', (req, res) => {
+  const goalId = req.params.id;
 
+  db.query('SELECT * FROM Goals WHERE id = ?', [goalId], (err, results) => {
+    if (err) return res.status(500).json({ error: err.message });
 
-// Get goals and steps for a user
-app.get("/users/:userId/goals", (req, res) => {
-  const userId = req.params.userId;
-  db.query(
-    `
-    SELECT Goals.id AS goalId, Goals.title AS goalTitle, Goals.description AS goalDescription,
-           Steps.id AS stepId, Steps.title AS stepTitle, Steps.description AS stepDescription, Steps.is_completed
-    FROM Goals
-    LEFT JOIN Steps ON Goals.id = Steps.goal_id
-    WHERE Goals.user_id = ?
-  `,
-    [userId],
-    (err, rows) => {
-      if (err) return res.status(400).json({ error: err.message });
-
-      const goals = {};
-      rows.forEach((row) => {
-        if (!goals[row.goalId]) {
-          goals[row.goalId] = {
-            id: row.goalId,
-            title: row.goalTitle,
-            description: row.goalDescription,
-            steps: [],
-          };
-        }
-        if (row.stepId) {
-          goals[row.goalId].steps.push({
-            id: row.stepId,
-            title: row.stepTitle,
-            description: row.stepDescription,
-            is_completed: !!row.is_completed,
-          });
-        }
-      });
-
-      res.json(Object.values(goals));
+    if (results.length === 0) {
+      return res.status(404).json({ message: 'Goal not found' });
     }
-  );
+
+    res.json(results[0]);
+  });
 });
+
+app.delete('/subgoals/:id', (req, res) => {
+  const stepId = req.params.id;
+
+  db.query('DELETE FROM Steps WHERE id = ?', [stepId], (err, result) => {
+    if (err) return res.status(500).json({ error: err.message });
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'Step not found' });
+    }
+
+    res.json({ message: `Step ${stepId} deleted successfully.` });
+  });
+});
+
+
+
+
 
 // Start the server
 app.listen(PORT, () => {

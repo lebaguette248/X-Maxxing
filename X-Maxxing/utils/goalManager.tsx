@@ -33,7 +33,7 @@ export async function createGoal(
   }
 }
 
-export async function getGoals(userId: Number) {
+export async function getGoalsbyUser(userId: Number) {
   try {
     const res = await fetch(`${API_URL}/goals/${userId}`, {
       method: "GET",
@@ -66,6 +66,8 @@ export async function deleteGoal(goalId: Number) {
     console.error("Error deleting goal:", error);
   }
 }
+
+
 
 export async function getSubgoals(goalId: Number) {
   try {
@@ -103,8 +105,8 @@ export async function createSubgoal(goalId: number, title: string, description: 
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         goal_id: goalId,
-        title,
-        description,
+        title: title,
+        description: description,
       }),
     });
 
@@ -117,6 +119,19 @@ export async function createSubgoal(goalId: number, title: string, description: 
   }
 }
 
+export async function getGoalById(goalId: number):Promise<Goal | null> {
+  try {
+    const response = await fetch(`${API_URL}/goalsbyId/${goalId}`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch goal');
+    }
+    const goal = await response.json();
+    return goal;
+  } catch (error) {
+    console.error("Error fetching goal by ID:", error);
+    return null;
+  }
+}
 
 
 

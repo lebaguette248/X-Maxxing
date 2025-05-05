@@ -8,7 +8,7 @@ import { useContext } from "react";
 import { ThemedText } from "@/components/ThemedText";
 import { TextInput } from "react-native-gesture-handler";
 import { BlurredModal } from "@/components/blurModalComponent";
-import { createGoal, getGoals, Goal } from "@/utils/goalManager";
+import { createGoal, getGoalsbyUser, Goal } from "@/utils/goalManager";
 import { router} from "expo-router";
 
 export default function HomeScreen() {
@@ -26,7 +26,7 @@ export default function HomeScreen() {
   );
   console.log("Logged in user email: ", authContext.loggedInUserEmail);
   console.log("Logged in user is logged in: ", authContext.isLoggedIn);
-  console.log("goals: ", getGoals(authContext.loggedInUserId));
+  console.log("goals: ", getGoalsbyUser(authContext.loggedInUserId));
 
 
 
@@ -34,7 +34,7 @@ export default function HomeScreen() {
 
   useEffect(() => {
     const fetchGoals = async () => {
-      const fetchedGoals = await getGoals(authContext.loggedInUserId);
+      const fetchedGoals = await getGoalsbyUser(authContext.loggedInUserId);
       setGoals(fetchedGoals);
     };
     fetchGoals();
@@ -97,7 +97,7 @@ export default function HomeScreen() {
       <ThemedView style={styles.goalsSection}>
         <ThemedText style={styles.sectionTitle}>Your Goals</ThemedText>
         {goals.map((goal, index) => (
-          <TouchableOpacity onPress={() => router.push(`/subgoals/${goal.id}`)}>
+          <TouchableOpacity onPress={() => router.push(`/(subgoals)/${goal.id}`)}>
             <View key={index} style={styles.goalItem}>
               <ThemedText style={styles.goalTitle}>{goal.title}</ThemedText>
               <ThemedText style={styles.goalDescription}>
