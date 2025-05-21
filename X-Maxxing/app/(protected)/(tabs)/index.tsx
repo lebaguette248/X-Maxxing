@@ -6,29 +6,27 @@ import { Button } from "react-native";
 import { AuthContext } from "@/utils/authContext";
 import { useContext } from "react";
 import { ThemedText } from "@/components/ThemedText";
-import { TextInput } from "react-native-gesture-handler";
+import { Pressable, TextInput } from "react-native-gesture-handler";
 import { BlurredModal } from "@/components/blurModalComponent";
-import { createGoal, getGoalsbyUser, Goal } from "@/utils/goalManager";
-import { router} from "expo-router";
+import {
+  createGoal,
+  deleteGoal,
+  getGoalsbyUser,
+  Goal,
+} from "@/utils/goalManager";
+import { router } from "expo-router";
+import { Colors } from "@/constants/Colors";
 
 export default function HomeScreen() {
   const authContext = useContext(AuthContext);
   const [modalVisible, setModalVisible] = useState(false);
+  const [confirmDeletemodalVisible, setconfirmDeletemodalVisible] =
+    useState(false);
+  const [goalToChange, setGoalToChange] = useState("");
+  const [goalToChangeTitle, setGoalToChangeTitle] = useState("");
 
   const [goalInput, setGoalInput] = useState("");
   const [descriptionInput, setDescriptionInput] = useState("");
-
-  console.log("HomeScreen");
-  console.log(
-    "Logged in user: ",
-    authContext.loggedInUser,
-    authContext.loggedInUserId
-  );
-  console.log("Logged in user email: ", authContext.loggedInUserEmail);
-  console.log("Logged in user is logged in: ", authContext.isLoggedIn);
-  console.log("goals: ", getGoalsbyUser(authContext.loggedInUserId));
-
-
 
   const [goals, setGoals] = useState<Goal[]>([]);
 
@@ -42,69 +40,157 @@ export default function HomeScreen() {
 
   return (
     <ParallaxScrollView
-      headerBackgroundColor={{ light: "#A1CEDC", dark: "#1D3D47" }}
+      headerBackgroundColor={{
+        light: Colors.xmaxxinglight.logoBackground,
+        dark: Colors.xmaxxingdark.logoBackground,
+      }}
       headerImage={
         <Image
-          source={require("@/assets/images/partial-react-logo.png")}
+          source={require("@/assets/images/xmaxxing_pattern_transparent_cropped.png")}
           style={styles.reactLogo}
         />
       }
     >
       <ThemedView style={styles.titleContainer}>
-        <ThemedText> Hello {authContext.loggedInUser}</ThemedText>
-        <Button title="Lock out" onPress={authContext.logOut} />
-        <Button title="Create new Goal" onPress={() => setModalVisible(true)} />
+        <ThemedText style={styles.title}>
+          {" "}
+          Willkommen zurück{" "}
+          {String(authContext.loggedInUser).charAt(0).toUpperCase() +
+            String(authContext.loggedInUser).slice(1)}
+        </ThemedText>
+        <ThemedView>
+          <Button title="Log out" onPress={authContext.logOut} />
+        </ThemedView>
       </ThemedView>
 
-      <BlurredModal /* create a new goal */
+      {/* Create the "Create Goal" Modal  */}
+      <BlurredModal
         visible={modalVisible}
         onRequestClose={() => {
           setModalVisible(false);
         }}
       >
         <ThemedView style={styles.modalContainer}>
-          <ThemedText>This is a modal!</ThemedText>
+          <ThemedText>Create a new Goal</ThemedText>
           <TextInput
             style={styles.input}
-            onChangeText={(text) => setGoalInput(text)}
+            onChangeText={(text) => setGoalInput(text.toLowerCase())}
             placeholder="Goal"
           ></TextInput>
           <TextInput
             style={styles.input}
-            onChangeText={(text) => setDescriptionInput(text)}
+            onChangeText={(text) => setDescriptionInput(text.toLowerCase())}
             placeholder="Description"
           ></TextInput>
-          <Button
-            title="Cancel"
-            onPress={() => {
-              setModalVisible(false);
+          <ThemedView style={{ display: "flex", flexDirection: "row", gap: 8 }}>
+            <Button
+              color="red"
+              title="Cancel"
+              onPress={() => {
+                setModalVisible(false);
+              }}
+            />
+            <Button
+              title="Create"
+              color="green"
+              onPress={() => {
+                setModalVisible(false);
+                createGoal(
+                  authContext.loggedInUserId,
+                  goalInput,
+                  descriptionInput
+                );
+                window.location.reload();
+              }}
+            />
+          </ThemedView>
+        </ThemedView>
+      </BlurredModal>
+
+      {/* Create the "Delete Goal" Modal  */}
+      <BlurredModal
+        visible={confirmDeletemodalVisible}
+        onRequestClose={() => {
+          setconfirmDeletemodalVisible(false);
+        }}
+      >
+        <ThemedView style={styles.modalContainer}>
+          <ThemedText
+            style={{
+              fontSize: 20,
+              fontWeight: "bold",
+              marginBottom: 16,
+              marginTop: 16,
             }}
-          />
-          <Button
-            title="Create"
-            onPress={() => {
-              setModalVisible(false);
-              createGoal(
-                authContext.loggedInUserId,
-                goalInput,
-                descriptionInput
-              );
-            }}
-          />
+          >
+            WARNING
+          </ThemedText>
+          <ThemedText>
+            Do you really want to delete {goalToChangeTitle} ?
+          </ThemedText>
+          <ThemedView style={{ display: "flex", flexDirection: "row", gap: 8 }}>
+            <Button
+              title="Cancel"
+              color="green"
+              onPress={() => {
+                setconfirmDeletemodalVisible(false);
+              }}
+            />
+            <Button
+              title="Delete"
+              color="red"
+              onPress={() => {
+                setconfirmDeletemodalVisible(false);
+                deleteGoal(Number(goalToChange));
+                setGoalToChange("");
+                setGoalToChangeTitle;
+                window.location.reload();
+              }}
+            />
+          </ThemedView>
         </ThemedView>
       </BlurredModal>
 
       <ThemedView style={styles.goalsSection}>
-        <ThemedText style={styles.sectionTitle}>Your Goals</ThemedText>
-        {goals.map((goal, index) => (
-          <TouchableOpacity onPress={() => router.push(`/(subgoals)/${goal.id}`)}>
-            <View key={index} style={styles.goalItem}>
-              <ThemedText style={styles.goalTitle}>{goal.title}</ThemedText>
-              <ThemedText style={styles.goalDescription}>
-                {goal.description}
-              </ThemedText>
-            </View>
-          </TouchableOpacity>
+        <ThemedView>
+          <ThemedText style={styles.sectionTitle}>Your Goals</ThemedText>
+          <ThemedView
+            style={{ maxWidth: 100, borderRadius: 8, overflow: "hidden" }}
+          >
+            <Button
+              title="Create new Goal"
+              onPress={() => setModalVisible(true)}
+            />
+          </ThemedView>
+        </ThemedView>
+
+
+
+        {goals?.map((goal, index) => (
+          <View style={styles.goalItem}>
+            <Pressable
+              style={{  flex: 1 }}
+              onPress={() => router.push(`/(subgoals)/${goal.id}`)}
+            >
+              <View style={{ margin: 8 }}>
+                <ThemedText style={styles.goalTitle}>{goal.title}</ThemedText>
+                <ThemedText style={styles.goalDescription}>
+                  {goal.description}
+                </ThemedText>
+              </View>
+            </Pressable>
+            
+              <Pressable
+                style={styles.deleteButton}
+                onPress={() => {
+                  setGoalToChange(goal.id);
+                  setGoalToChangeTitle(goal.title);
+                  setconfirmDeletemodalVisible(true);
+                }}
+              >
+                <ThemedText>Delete {goal.title}</ThemedText>
+              </Pressable>
+          </View>
         ))}
       </ThemedView>
     </ParallaxScrollView>
@@ -114,7 +200,7 @@ export default function HomeScreen() {
 export const styles = StyleSheet.create({
   titleContainer: {
     flexDirection: "row",
-    alignItems: "center",
+    justifyContent: "space-between",
     gap: 8,
   },
   stepContainer: {
@@ -122,18 +208,20 @@ export const styles = StyleSheet.create({
     marginBottom: 8,
   },
   reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
+    height: 300,
+    width: 450,
     position: "absolute",
   },
   modalContainer: {
-    flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#fff",
     padding: 20,
+    maxHeight: 400,
+    maxWidth: 400,
+    minWidth: 100,
+    borderRadius: 12,
+    borderColor: "#FFF",
+    borderWidth: 1,
   },
   input: {
     height: 50,
@@ -156,12 +244,17 @@ export const styles = StyleSheet.create({
     marginBottom: 16,
   },
   goalItem: {
-    padding: 16,
+    overflow: "hidden",
+    maxWidth: 400,
+    marginTop: 30,
     marginBottom: 12,
-    borderRadius: 8,
+    borderRadius: 12,
     borderWidth: 1,
     borderColor: "#ddd",
     backgroundColor: "rgba(255, 255, 255, 0.1)",
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
   goalTitle: {
     fontSize: 18,
@@ -171,5 +264,17 @@ export const styles = StyleSheet.create({
   goalDescription: {
     fontSize: 14,
     color: "rgb(120, 120, 120)",
+  },
+  title: {
+    fontSize: 30,
+    fontWeight: "bold",
+    marginTop: 16,
+  },
+  deleteButton: {
+    backgroundColor: "rgba(255, 0, 0, 0.42)",
+    textAlign: "center",
+    justifyContent: "center",
+    alignItems: "center",
+    flexWrap: "wrap",
   },
 });

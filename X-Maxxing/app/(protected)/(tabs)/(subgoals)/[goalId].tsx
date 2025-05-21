@@ -1,4 +1,4 @@
-import { Redirect, useLocalSearchParams } from "expo-router";
+import { Redirect, router, useLocalSearchParams } from "expo-router";
 import { TextInput, Button, StyleSheet, ScrollView, Alert } from "react-native";
 import React, { useEffect, useState } from "react";
 import { ThemedText } from "@/components/ThemedText";
@@ -22,7 +22,6 @@ export default function SubgoalPage() {
 
   const [goalData, setGoalData] = useState(null);
 
-  
   useEffect(() => {
     const fetchGoalData = async () => {
       try {
@@ -52,6 +51,12 @@ export default function SubgoalPage() {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      <Button
+        title="Return to Home"
+        onPress={() => {
+          router.push("/");
+        }}
+      />
       <ThemedText style={styles.header}>
         Add Subgoal to Goal "{goalData?.title}"
       </ThemedText>
@@ -70,6 +75,9 @@ export default function SubgoalPage() {
       <Button
         title="Add Subgoal"
         onPress={() => createSubgoal(Number(goalId), title, description)}
+        onPressOut={() => {
+          window.location.reload();
+        }}
       />
       <Button
         title="Generate Subgoals"
@@ -90,8 +98,10 @@ export default function SubgoalPage() {
           <Button
             title="Delete"
             color="red"
-            onPress={() => {console.log(goal.id);
+            onPress={() => {
+              console.log(goal.id);
               deleteSubgoal(goal.id);
+              window.location.reload();
             }}
           />
         </ThemedView>

@@ -14,6 +14,11 @@ type Authstate = {
   isLoggedIn: boolean;
   logIn: (username: string, password: string) => void;
   logOut: () => void;
+  createUser: (
+    username: string,
+    email: string,
+    password: string
+  ) => Promise<void>;
   isReady: boolean;
 
   loggedInUser: string;
@@ -24,13 +29,13 @@ type Authstate = {
 const authStrogeKey = "auth-key";
 const API_URL = process.env.EXPO_PUBLIC_XM_URL + "/auth/login"; // SET IN .ENV FILE MANNNN
 
-
 //Verwendung von Typ für Constante AuthContext, welche einen Context mit Authstate erstellt
 export const AuthContext = createContext<Authstate>({
   isLoggedIn: false,
   isReady: false,
   logIn: () => {},
   logOut: () => {},
+  createUser: async (username: string, email: string, password: string) => Promise.resolve(),
   loggedInUser: "",
   loggedInUserId: 0,
   loggedInUserEmail: "",
@@ -63,7 +68,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
-      }); 
+      });
 
       if (!res.ok) {
         throw new Error("Invalid username or password");
@@ -114,9 +119,47 @@ export function AuthProvider({ children }: PropsWithChildren) {
     getAuthFromStorage();
   }, []);
 
+  const createUser = async (
+    username: string,
+    email: string,
+    password: string
+  ) => {
+    try {
+      const response = await fetch("http://localhost:3000/users", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username,
+          email,
+          password,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to create user");
+      }
+
+      const data = await response.json();
+      console.log("User created:", data);
+    } catch (error) {
+      console.error("Error creating user:", error);
+    }
+  };
+
   return (
     <AuthContext.Provider
-      value={{ isLoggedIn, logIn, logOut, loggedInUser, loggedInUserEmail,loggedInUserId , isReady }}
+      value={{
+        isLoggedIn,
+        createUser,
+        logIn,
+        logOut,
+        loggedInUser,
+        loggedInUserEmail,
+        loggedInUserId,
+        isReady,
+      }}
     >
       {children}
     </AuthContext.Provider>
