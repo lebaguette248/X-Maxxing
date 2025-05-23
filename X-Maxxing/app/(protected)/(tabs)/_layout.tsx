@@ -41,6 +41,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="settings"
         options={{
+
           title: "Settings",
           tabBarIcon: ({ color }) => (
             <IconSymbol size={28} name="gearshape.fill" color={color} />
@@ -54,6 +55,7 @@ export default function TabLayout() {
             <IconSymbol size={28} name="checkmark.circle.fill" color={color} />
           ),
         }}/>
+
     </Tabs>
   );
 }

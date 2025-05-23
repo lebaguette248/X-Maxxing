@@ -8,12 +8,14 @@ import {
   ThemeProvider,
 } from "@react-navigation/native";
 import responsiveHelper from "@/components/responsive-helper";
+import { router} from "expo-router";
 import { Colors } from "@/constants/Colors";
 
 export default function LoginScreen() {
   const authContext = useContext(AuthContext);
   const colorScheme = useColorScheme();
   const [unameInput, setUnameInput] = useState("");
+
   const [passwordInput, setPasswordInput] = useState("");
 
   const [createUserInput, setCreateUserInput] = useState("");
@@ -22,12 +24,14 @@ export default function LoginScreen() {
 
   const [mode, setMode] = useState("login");
 
+
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
       <View
         style={!responsiveHelper() ? styles.desktopview : styles.mobileview}
       >
         <View style={styles.container}>
+
           {mode === "login" ? (
               <>
                 <TextInput
@@ -95,11 +99,14 @@ export default function LoginScreen() {
               ></Button>
             </>
           )}
+
         </View>
       </View>
     </ThemeProvider>
   );
 }
+
+
 
 const styles = StyleSheet.create({
   button: {
