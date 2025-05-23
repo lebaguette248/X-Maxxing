@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import { View, Text, Button, useColorScheme, TextInput } from "react-native";
+import { View, Button, useColorScheme, TextInput } from "react-native";
 import { AuthContext } from "@/utils/authContext";
 import { StyleSheet } from "react-native";
 import {
@@ -16,27 +16,90 @@ export default function LoginScreen() {
   const colorScheme = useColorScheme();
   const [unameInput, setUnameInput] = useState("");
 
+  const [passwordInput, setPasswordInput] = useState("");
+
+  const [createUserInput, setCreateUserInput] = useState("");
+  const [createPasswordInput, setCreatePasswordInput] = useState("");
+  const [createEmailInput, setCreateEmailInput] = useState("");
+
+  const [mode, setMode] = useState("login");
+
+
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
       <View
         style={!responsiveHelper() ? styles.desktopview : styles.mobileview}
       >
         <View style={styles.container}>
-          <TextInput style={styles.input} 
-          id="unameInput"
-          onChangeText={(text) => setUnameInput(text)} 
-          placeholder="Username" />
-          <TextInput style={styles.input} placeholder="Password"></TextInput>
-          <Button
-            title="Log In"
-            onPress={() => authContext.logIn(unameInput)}
-            color={"#F00"}
-          ></Button>
-          <Button
-            title="No Account yet? Register" 
-            onPress={() => router.replace("/register")}
-            color={Colors.xmaxxingdark.tintColorDark}
-          ></Button>
+
+          {mode === "login" ? (
+              <>
+                <TextInput
+                  style={styles.input}
+                  id="unameInput"
+                  onChangeText={(text) => setUnameInput(text.toLowerCase())}
+                  placeholder="Username"
+                />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Password"
+                  onChangeText={(text) => setPasswordInput(text.toLowerCase())}
+                ></TextInput>
+                <Button
+                  title="Log In"
+                  onPress={() => authContext.logIn(unameInput, passwordInput)}
+                  color={Colors.xmaxxingdark.tabIconSelected}
+                ></Button>
+                <View style={{ margin: 10 }}></View>
+                <Button
+                  title="No Account yet? Register"
+                  onPress={() => setMode("register")}
+                  color={Colors.xmaxxingdark.tabIconSelected}
+                ></Button>
+              </>
+          ) : (
+            <>
+              <TextInput
+                style={styles.input}
+                placeholder="Email"
+                onChangeText={(text) => setCreateEmailInput(text.toLowerCase())}
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="Username"
+                onChangeText={(text) => setCreateUserInput(text.toLowerCase())}
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="Password"
+                onChangeText={(text) =>
+                  setCreatePasswordInput(text.toLowerCase())
+                }
+              />
+
+              <Button
+                title="Register"
+                onPress={() => {
+                  authContext.createUser(
+                    createUserInput,
+                    createEmailInput,
+                    createPasswordInput
+                  );
+                  window.location.reload;
+                }}
+                color={Colors.xmaxxingdark.tabIconSelected}
+              ></Button>
+              <View style={{ margin: 10 }}></View>
+              <Button
+                title="Have a Account? Log In"
+                onPress={() => {
+                  setMode("login");
+                }}
+                color={Colors.xmaxxingdark.tabIconSelected}
+              ></Button>
+            </>
+          )}
+
         </View>
       </View>
     </ThemeProvider>
@@ -48,6 +111,7 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   button: {
     marginTop: 20,
+    marginBottom: 20,
     paddingVertical: 14,
     backgroundColor: "#F00",
     borderRadius: 8,
@@ -68,9 +132,11 @@ const styles = StyleSheet.create({
   },
   desktopview: {
     flex: 1,
+    width: "100%",
+    display: "flex",
+    flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
-    maxWidth: 800,
   },
   container: {
     width: "90%",
@@ -84,6 +150,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
+    maxWidth: 800,
   },
   input: {
     height: 50,
@@ -96,6 +163,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     backgroundColor: "rgba(255, 255, 255, 0.1)",
   },
+
   mobileview: {
     flex: 1,
     backgroundColor: "#121212",
