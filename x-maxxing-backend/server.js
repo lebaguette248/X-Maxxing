@@ -1,9 +1,10 @@
+require ("dotenv").config();
 const express = require("express");
 const mysql = require("mysql2");
 const cors = require("cors");
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.DB_PORT;
 
 // Middleware
 app.use(cors());
@@ -11,10 +12,10 @@ app.use(express.json());
 
 // MySQL Connection
 const db = mysql.createConnection({
-  host: "localhost",
-  user: "xmaxxing_manager",
-  password: "nickyyy", // BEISPIEL
-  database: "xmaxxing_db",
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_DATABASE,
 });
 
 db.connect((err) => {
@@ -112,6 +113,30 @@ app.post("/goals", (req, res) => {
     }
   );
 });
+
+
+app.delete('/goals/:id', (req, res) => {
+  const goalId = req.params.id;
+
+  // First delete any associated steps (foreign key constraint)
+  const deleteStepsQuery = 'DELETE FROM Steps WHERE goal_id = ?';
+  const deleteGoalQuery = 'DELETE FROM Goals WHERE id = ?';
+
+  db.query(deleteStepsQuery, [goalId], (stepErr) => {
+    if (stepErr) return res.status(500).json({ error: stepErr.message });
+
+    db.query(deleteGoalQuery, [goalId], (goalErr, result) => {
+      if (goalErr) return res.status(500).json({ error: goalErr.message });
+
+      if (result.affectedRows === 0) {
+        return res.status(404).json({ message: 'Goal not found' });
+      }
+
+      res.json({ message: 'Goal deleted successfully', goalId });
+    });
+  });
+});
+
 
 app.get("/goals/:userId", (req, res) => {
   const userId = req.params.userId;

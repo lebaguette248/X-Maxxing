@@ -1,5 +1,10 @@
 import { Modal, StyleSheet } from "react-native";
 import { BlurView } from "expo-blur";
+import {
+  DarkTheme,
+  DefaultTheme,
+  ThemeProvider,
+} from "@react-navigation/native";
 
 export function BlurredModal({
   visible,
@@ -9,7 +14,8 @@ export function BlurredModal({
   visible: boolean;
   onRequestClose: () => void;
   children: React.ReactNode;
-}) {
+}) 
+{
   return (
     <Modal
       transparent={true}
