@@ -4,10 +4,19 @@ import { Alert } from "react-native";
 import React, {
   createContext,
   PropsWithChildren,
-  useContext,
   useEffect,
   useState,
 } from "react";
+import * as Crypto from "expo-crypto"; 
+
+export async function generateSHA256Hash(data: string): Promise<string> {
+  const digest = await Crypto.digestStringAsync(
+    Crypto.CryptoDigestAlgorithm.SHA512,
+    data
+  );
+  console.log("SHA256 Hash:", digest);
+  return digest;
+}
 
 //Definiert neuer Typ in Typescript
 type Authstate = {
@@ -35,7 +44,8 @@ export const AuthContext = createContext<Authstate>({
   isReady: false,
   logIn: () => {},
   logOut: () => {},
-  createUser: async (username: string, email: string, password: string) => Promise.resolve(),
+  createUser: async (username: string, email: string, password: string) =>
+    Promise.resolve(),
   loggedInUser: "",
   loggedInUserId: 0,
   loggedInUserEmail: "",
@@ -64,12 +74,12 @@ export function AuthProvider({ children }: PropsWithChildren) {
 
   const logIn = async (username: string, password: string) => {
     try {
+      password = (await generateSHA256Hash(password)).toString();
       const res = await fetch(API_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
       });
-
       if (!res.ok) {
         throw new Error("Invalid username or password");
       }
@@ -125,6 +135,14 @@ export function AuthProvider({ children }: PropsWithChildren) {
     password: string
   ) => {
     try {
+      username = username.toLowerCase();
+      email = email.toLowerCase();
+      password = password;
+      password = (await generateSHA256Hash(password)).toString();
+
+      if (!username || !email || !password) {
+        Alert.alert("Error", "Please fill in all fields");
+      }
       const response = await fetch("http://localhost:3000/users", {
         method: "POST",
         headers: {

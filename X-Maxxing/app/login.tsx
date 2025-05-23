@@ -29,31 +29,30 @@ export default function LoginScreen() {
       >
         <View style={styles.container}>
           {mode === "login" ? (
-            <>
-              <TextInput
-                style={styles.input}
-                id="unameInput"
-                onChangeText={(text) => setUnameInput(text.toLowerCase())}
-                placeholder="Username"
-                activeUnderlineColor="rgba(173, 0, 0, 0.79)"
-              />
-              <TextInput
-                style={styles.input}
-                placeholder="Password"
-                onChangeText={(text) => setPasswordInput(text.toLowerCase())}
-              ></TextInput>
-              <Button
-                title="Log In"
-                onPress={() => authContext.logIn(unameInput, passwordInput)}
-                color={Colors.xmaxxingdark.tabIconSelected}
-              ></Button>
-              <View style={{ margin: 10 }}></View>
-              <Button
-                title="No Account yet? Register"
-                onPress={() => setMode("register")}
-                color={Colors.xmaxxingdark.tabIconSelected}
-              ></Button>
-            </>
+              <>
+                <TextInput
+                  style={styles.input}
+                  id="unameInput"
+                  onChangeText={(text) => setUnameInput(text.toLowerCase())}
+                  placeholder="Username"
+                />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Password"
+                  onChangeText={(text) => setPasswordInput(text.toLowerCase())}
+                ></TextInput>
+                <Button
+                  title="Log In"
+                  onPress={() => authContext.logIn(unameInput, passwordInput)}
+                  color={Colors.xmaxxingdark.tabIconSelected}
+                ></Button>
+                <View style={{ margin: 10 }}></View>
+                <Button
+                  title="No Account yet? Register"
+                  onPress={() => setMode("register")}
+                  color={Colors.xmaxxingdark.tabIconSelected}
+                ></Button>
+              </>
           ) : (
             <>
               <TextInput
@@ -69,25 +68,28 @@ export default function LoginScreen() {
               <TextInput
                 style={styles.input}
                 placeholder="Password"
-                onChangeText={(text) => setCreatePasswordInput(text.toLowerCase())}
+                onChangeText={(text) =>
+                  setCreatePasswordInput(text.toLowerCase())
+                }
               />
 
               <Button
                 title="Register"
-                onPress={() =>
-                  {authContext.createUser(
+                onPress={() => {
+                  authContext.createUser(
                     createUserInput,
                     createEmailInput,
                     createPasswordInput
-                  )
-                window.location.reload;}
-                }
+                  );
+                  window.location.reload;
+                }}
                 color={Colors.xmaxxingdark.tabIconSelected}
               ></Button>
               <View style={{ margin: 10 }}></View>
               <Button
                 title="Have a Account? Log In"
-                onPress={() => {setMode("login")
+                onPress={() => {
+                  setMode("login");
                 }}
                 color={Colors.xmaxxingdark.tabIconSelected}
               ></Button>
@@ -153,9 +155,8 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 16,
     backgroundColor: "rgba(255, 255, 255, 0.1)",
-  }
-  
-  ,
+  },
+
   mobileview: {
     flex: 1,
     backgroundColor: "#121212",

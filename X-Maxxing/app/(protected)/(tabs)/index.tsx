@@ -29,12 +29,12 @@ export default function HomeScreen() {
   const [descriptionInput, setDescriptionInput] = useState("");
 
   const [goals, setGoals] = useState<Goal[]>([]);
+  const fetchGoals = async () => {
+    const fetchedGoals = await getGoalsbyUser(authContext.loggedInUserId);
+    setGoals(fetchedGoals);
+  };
 
   useEffect(() => {
-    const fetchGoals = async () => {
-      const fetchedGoals = await getGoalsbyUser(authContext.loggedInUserId);
-      setGoals(fetchedGoals);
-    };
     fetchGoals();
   }, [authContext.loggedInUserId]);
 
@@ -100,7 +100,7 @@ export default function HomeScreen() {
                   goalInput,
                   descriptionInput
                 );
-                window.location.reload();
+                fetchGoals();
               }}
             />
           </ThemedView>
@@ -166,7 +166,7 @@ export default function HomeScreen() {
 
 
 
-        {goals?.map((goal, index) => (
+        {goals?.map((goal) => (
           <View style={styles.goalItem}>
             <Pressable
               style={{  flex: 1 }}
