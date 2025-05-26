@@ -1,9 +1,8 @@
-````markdown
+
 # X-Maxxing
 
 **X-Maxxing** ist eine App zur Selbstoptimierung ("Maxxen"), die über ein React Native Frontend mit einem Node.js-Backend und einer MySQL-Datenbank kommuniziert. Dieses Projekt besteht aus zwei Hauptkomponenten: dem **Backend-Server**, der API und Datenbankzugriff bereitstellt, und dem **Frontend-Client**, der auf PC oder Mobilgerät verwendet werden kann.
 
----
 
 ## 📦 Repository
 
