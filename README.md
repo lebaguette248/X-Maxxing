@@ -112,7 +112,7 @@ Stelle sicher, dass du alle Variablen in der `.env` gemäß der separaten Konfig
 
 ---
 
-## 🐱‍💻 Autor
+## 🐱‍💻 Autoren
 
 **GitHub:** [lebaguette248](https://github.com/lebaguette248)
 **GitHub:** [Abischan2131](https://github.com/abishan2131)
