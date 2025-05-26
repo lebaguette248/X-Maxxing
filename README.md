@@ -1,5 +1,3 @@
-Klar! Hier ist der komplette `README.md`-Inhalt, so dass du ihn direkt **als Ganzes kopieren** kannst:
-
 ````markdown
 # X-Maxxing
 
