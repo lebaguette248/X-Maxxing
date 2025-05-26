@@ -115,14 +115,7 @@ Stelle sicher, dass du alle Variablen in der `.env` gemäß der separaten Konfig
 ## 🐱‍💻 Autor
 
 **GitHub:** [lebaguette248](https://github.com/lebaguette248)
+**GitHub:** [Abischan2131](https://github.com/abishan2131)
 
 ---
 
-## 📜 Lizenz
-
-Dieses Projekt steht unter keiner spezifischen Lizenz (Stand jetzt).
-
-```
-
-Wenn du willst, kann ich dir diese Datei auch direkt im `.md`-Format exportieren oder ein paar Shields hinzufügen (z. B. Node-Version, Plattform, Expo etc.) 😼.
-```
