@@ -29,48 +29,66 @@ export default function LoginScreen() {
       >
         <View style={styles.container}>
           {mode === "login" ? (
-              <>
-                <TextInput
-                  style={styles.input}
-                  id="unameInput"
-                  onChangeText={(text) => setUnameInput(text.toLowerCase())}
-                  placeholder="Username"
-                />
-                <TextInput
-                  style={styles.input}
-                  placeholder="Password"
-                  onChangeText={(text) => setPasswordInput(text.toLowerCase())}
-                ></TextInput>
-                <Button
-                  title="Log In"
-                  onPress={() => authContext.logIn(unameInput, passwordInput)}
-                  color={Colors.xmaxxingdark.tabIconSelected}
-                ></Button>
-                <View style={{ margin: 10 }}></View>
-                <Button
-                  title="No Account yet? Register"
-                  onPress={() => setMode("register")}
-                  color={Colors.xmaxxingdark.tabIconSelected}
-                ></Button>
-              </>
+            <>
+              <TextInput
+                style={styles.input}
+                id="unameInput"
+                onChangeText={(text) => setUnameInput(text.toLowerCase())}
+                placeholder="Username"
+                autoComplete="username"
+                autoCapitalize="none"
+                textContentType="username"
+                autoCorrect={false}
+                keyboardType="default"
+                autoFocus={true}
+                returnKeyType="next"
+              />
+              <TextInput
+                style={styles.input}
+                placeholder="Password"
+                onChangeText={(text) => setPasswordInput(text.toLowerCase())}
+                autoComplete="password"
+                autoCapitalize="none"
+                textContentType="password"
+                secureTextEntry={true}
+                autoCorrect={false}
+                keyboardType="default"
+                returnKeyType="done"
+              ></TextInput>
+              <Button
+                title="Log In"
+                onPress={() => authContext.logIn(unameInput, passwordInput)}
+                color={Colors.xmaxxingdark.tabIconSelected}
+              ></Button>
+              <View style={{ margin: 10 }}></View>
+              <Button
+                title="No Account yet? Register"
+                onPress={() => setMode("register")}
+                color={Colors.xmaxxingdark.tabIconSelected}
+              ></Button>
+            </>
           ) : (
             <>
               <TextInput
                 style={styles.input}
                 placeholder="Email"
                 onChangeText={(text) => setCreateEmailInput(text.toLowerCase())}
+                autoComplete="email"
+                keyboardType="email-address"
+                autoCapitalize="none"
+                textContentType="emailAddress"
               />
               <TextInput
                 style={styles.input}
                 placeholder="Username"
                 onChangeText={(text) => setCreateUserInput(text.toLowerCase())}
+                autoComplete="username"
               />
               <TextInput
                 style={styles.input}
                 placeholder="Password"
-                onChangeText={(text) =>
-                  setCreatePasswordInput(text.toLowerCase())
-                }
+                autoComplete="password"
+                onChangeText={(text) => setCreatePasswordInput(text)}
               />
 
               <Button
@@ -81,7 +99,7 @@ export default function LoginScreen() {
                     createEmailInput,
                     createPasswordInput
                   );
-                  window.location.reload;
+                  setMode("login");
                 }}
                 color={Colors.xmaxxingdark.tabIconSelected}
               ></Button>
