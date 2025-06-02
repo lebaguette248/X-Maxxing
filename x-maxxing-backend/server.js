@@ -1,4 +1,4 @@
-require ("dotenv").config();
+require("dotenv").config();
 const express = require("express");
 const mysql = require("mysql2");
 const cors = require("cors");
@@ -74,6 +74,9 @@ app.post("/users", (req, res) => {
       if (err) return res.status(400).json({ error: err.message });
 
       res.json({ id: results.insertId, resp: "User created successfully" });
+      console.log(
+        `User created: ${username}, ID: ${results.insertId}, Email: ${email}`
+      );
     }
   );
 });
@@ -110,17 +113,95 @@ app.post("/goals", (req, res) => {
     (err, results) => {
       if (err) return res.status(500).json({ error: err.message });
       res.json({ id: results.insertId, message: "Goal created" });
+      console.log(
+        `Goal created: ${title}, ID: ${results.insertId}, User ID: ${user_id}`
+      );
     }
   );
 });
 
+app.put("/users/:id", (req, res) => {
+  const userId = req.params.id;
+  const { username, email, password } = req.body;
+  if (!username && !email && !password) {
+    return res.status(400).json({ error: "No fields provided for update" });
+  }
 
-app.delete('/goals/:id', (req, res) => {
+  let updateQuery = "UPDATE Users SET ";
+  let updateValues = [];
+  let updateFields = [];
+
+  // Dynamically add fields to update based on what is provided in the request body
+  if (username) {
+    updateFields.push("username = ?");
+    updateValues.push(username);
+  }
+  if (email) {
+    updateFields.push("email = ?");
+    updateValues.push(email);
+  }
+  if (password) {
+    updateFields.push("password = ?");
+    updateValues.push(password);
+  }
+
+  updateQuery += updateFields.join(", ") + " WHERE id = ?";
+  updateValues.push(userId);
+
+  // Execute the query
+  db.query(updateQuery, updateValues, (err, result) => {
+    if (err) {
+      return res.status(500).json({ error: err.message });
+    }
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.json({ message: "User updated successfully" });
+    console.log(
+      `User updated: ID ${userId}, Fields: ${updateFields.join(", ")}`
+    );
+  });
+});
+
+app.delete("/users/:id", (req, res) => {
+  const userId = req.params.id;
+  const deleteStepsQuery =
+    "DELETE FROM Steps WHERE goal_id IN (SELECT id FROM Goals WHERE user_id = ?)";
+  const deleteGoalsQuery = "DELETE FROM Goals WHERE user_id = ?";
+  const deleteUserQuery = "DELETE FROM Users WHERE id = ?";
+
+  try {
+    db.query(deleteStepsQuery, [userId], (stepErr) => {
+      if (stepErr) return res.status(500).json({ error: stepErr.message });
+
+      db.query(deleteGoalsQuery, [userId], (goalErr) => {
+        if (goalErr) return res.status(500).json({ error: goalErr.message });
+
+        db.query(deleteUserQuery, [userId], (userErr, result) => {
+          if (userErr) return res.status(500).json({ error: userErr.message });
+
+          if (result.affectedRows === 0) {
+            return res.status(404).json({ message: "User not found" });
+          }
+          res.json({ message: "User deleted successfully", userId });
+        });
+      });
+    });
+    console.log(`User deleted: ID ${userId}`);
+  } catch (error) {
+    console.error("Error deleting user:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+app.delete("/goals/:id", (req, res) => {
   const goalId = req.params.id;
 
   // First delete any associated steps (foreign key constraint)
-  const deleteStepsQuery = 'DELETE FROM Steps WHERE goal_id = ?';
-  const deleteGoalQuery = 'DELETE FROM Goals WHERE id = ?';
+  const deleteStepsQuery = "DELETE FROM Steps WHERE goal_id = ?";
+  const deleteGoalQuery = "DELETE FROM Goals WHERE id = ?";
 
   db.query(deleteStepsQuery, [goalId], (stepErr) => {
     if (stepErr) return res.status(500).json({ error: stepErr.message });
@@ -129,14 +210,13 @@ app.delete('/goals/:id', (req, res) => {
       if (goalErr) return res.status(500).json({ error: goalErr.message });
 
       if (result.affectedRows === 0) {
-        return res.status(404).json({ message: 'Goal not found' });
+        return res.status(404).json({ message: "Goal not found" });
       }
 
-      res.json({ message: 'Goal deleted successfully', goalId });
+      res.json({ message: "Goal deleted successfully", goalId });
     });
   });
 });
-
 
 app.get("/goals/:userId", (req, res) => {
   const userId = req.params.userId;
@@ -167,61 +247,64 @@ app.post("/subgoals", (req, res) => {
 });
 
 // GET subgoals by goal ID
-app.get('/subgoals/:goalId', (req, res) => {
+app.get("/subgoals/:goalId", (req, res) => {
   const goalId = req.params.goalId;
-  db.query('SELECT * FROM Steps WHERE goal_id = ?', [goalId], (err, results) => {
-    if (err) return res.status(500).json({ error: err.message });
-    res.json(results);
-  });
-});
-
-app.post('/subgoals', (req, res) => {
-  const { goal_id, title, description } = req.body;
-  if (!goal_id || !title) {
-    return res.status(400).json({ error: 'Missing required fields' });
-  }
-
   db.query(
-    'INSERT INTO Steps (goal_id, title, description) VALUES (?, ?, ?)',
-    [goal_id, title, description],
+    "SELECT * FROM Steps WHERE goal_id = ?",
+    [goalId],
     (err, results) => {
       if (err) return res.status(500).json({ error: err.message });
-      res.json({ id: results.insertId, message: 'Subgoal created successfully' });
+      res.json(results);
     }
   );
 });
 
-app.get('/goalsbyId/:id', (req, res) => {
+app.post("/subgoals", (req, res) => {
+  const { goal_id, title, description } = req.body;
+  if (!goal_id || !title) {
+    return res.status(400).json({ error: "Missing required fields" });
+  }
+
+  db.query(
+    "INSERT INTO Steps (goal_id, title, description) VALUES (?, ?, ?)",
+    [goal_id, title, description],
+    (err, results) => {
+      if (err) return res.status(500).json({ error: err.message });
+      res.json({
+        id: results.insertId,
+        message: "Subgoal created successfully",
+      });
+    }
+  );
+});
+
+app.get("/goalsbyId/:id", (req, res) => {
   const goalId = req.params.id;
 
-  db.query('SELECT * FROM Goals WHERE id = ?', [goalId], (err, results) => {
+  db.query("SELECT * FROM Goals WHERE id = ?", [goalId], (err, results) => {
     if (err) return res.status(500).json({ error: err.message });
 
     if (results.length === 0) {
-      return res.status(404).json({ message: 'Goal not found' });
+      return res.status(404).json({ message: "Goal not found" });
     }
 
     res.json(results[0]);
   });
 });
 
-app.delete('/subgoals/:id', (req, res) => {
+app.delete("/subgoals/:id", (req, res) => {
   const stepId = req.params.id;
 
-  db.query('DELETE FROM Steps WHERE id = ?', [stepId], (err, result) => {
+  db.query("DELETE FROM Steps WHERE id = ?", [stepId], (err, result) => {
     if (err) return res.status(500).json({ error: err.message });
 
     if (result.affectedRows === 0) {
-      return res.status(404).json({ message: 'Step not found' });
+      return res.status(404).json({ message: "Step not found" });
     }
 
     res.json({ message: `Step ${stepId} deleted successfully.` });
   });
 });
-
-
-
-
 
 // Start the server
 app.listen(PORT, () => {

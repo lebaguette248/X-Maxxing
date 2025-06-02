@@ -38,10 +38,12 @@ export default function LoginScreen() {
                 autoComplete="username"
                 autoCapitalize="none"
                 textContentType="username"
+                inputMode="text"
                 autoCorrect={false}
                 keyboardType="default"
                 autoFocus={true}
                 returnKeyType="next"
+                maxLength={30}
               />
               <TextInput
                 style={styles.input}
@@ -77,17 +79,35 @@ export default function LoginScreen() {
                 keyboardType="email-address"
                 autoCapitalize="none"
                 textContentType="emailAddress"
+                inputMode="email"
+                autoCorrect={false}
+                returnKeyType="next"
+                maxLength={120}
               />
               <TextInput
                 style={styles.input}
                 placeholder="Username"
                 onChangeText={(text) => setCreateUserInput(text.toLowerCase())}
                 autoComplete="username"
+                autoCapitalize="none"
+                textContentType="username"
+                inputMode="text"
+                autoCorrect={false}
+                keyboardType="default"
+                autoFocus={true}
+                returnKeyType="next"
+                maxLength={30}
               />
               <TextInput
                 style={styles.input}
                 placeholder="Password"
                 autoComplete="password"
+                autoCapitalize="none"
+                textContentType="password"
+                secureTextEntry={true}
+                autoCorrect={false}
+                keyboardType="default"
+                returnKeyType="done"
                 onChangeText={(text) => setCreatePasswordInput(text)}
               />
 
@@ -99,7 +119,6 @@ export default function LoginScreen() {
                     createEmailInput,
                     createPasswordInput
                   );
-                  setMode("login");
                 }}
                 color={Colors.xmaxxingdark.tabIconSelected}
               ></Button>
