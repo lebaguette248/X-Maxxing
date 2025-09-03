@@ -3,6 +3,12 @@
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
 This Project has / is being built for the Gibb Module M306 and M183.
 
+## What is X-Maxxing?
+XMaxxing is our response to fleeing atentionspans and helplessness caused by choice overload.
+Most people that have issues or goals know how to achieve them but are not sure how to aproach them.
+XMaxxing helps achiveing goals and dreams with helping you strategize by providing ai asisted breakdowns of Goals into subgoals.
+This assits the User in breaking down Goals into small steps, which are achievable and make goals reachable.
+
 
 ## Get started
 
