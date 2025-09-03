@@ -107,6 +107,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
     } catch (e) {
       console.error("Error logging in", e);
       Alert.alert("Login Failed", "Invalid username or password.");
+
     }
   };
 
@@ -116,6 +117,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
     storeAuthState({ isLoggedIn: false, loggedInUser: "", loggedInUserEmail });
     router.replace("/login");
   };
+
 
   useEffect(() => {
     const getAuthFromStorage = async () => {
@@ -146,6 +148,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
       email = email.toLowerCase().trim();
       password = password.trim();
       password = (await generateSHA256Hash(password)).toString();
+
 
       if (!username || !email || !password) {
         Alert.alert("Error", "Please fill in all fields");
