@@ -1,2 +1,5 @@
-EXPO_PUBLIC_XM_URL=http://192.168.1.16:3000
-
+# Instead of Localhost or 127.0.0.1 use the actual Ip
+# In the current network
+# Localhost bypasses fuckass cors policy
+EXPO_PUBLIC_XM_URL=http://localhost:3000
+EXPO_PUBLIC_XM_GEMINI_API_KEY=

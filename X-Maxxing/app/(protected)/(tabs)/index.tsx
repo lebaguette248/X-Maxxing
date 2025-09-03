@@ -1,4 +1,4 @@
-import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Image, StyleSheet, View } from "react-native";
 import { useState, useEffect } from "react";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedView } from "@/components/ThemedView";
@@ -8,6 +8,9 @@ import { useContext } from "react";
 import { ThemedText } from "@/components/ThemedText";
 import { Pressable, TextInput } from "react-native-gesture-handler";
 import { BlurredModal } from "@/components/blurModalComponent";
+import { Feather } from "@expo/vector-icons";
+import { styles } from "@/constants/styles";
+
 import {
   createGoal,
   deleteGoal,
@@ -16,6 +19,7 @@ import {
 } from "@/utils/goalManager";
 import { router } from "expo-router";
 import { Colors } from "@/constants/Colors";
+import responsiveHelper from "@/components/responsive-helper";
 
 export default function HomeScreen() {
   const authContext = useContext(AuthContext);
@@ -24,15 +28,14 @@ export default function HomeScreen() {
     useState(false);
   const [goalToChange, setGoalToChange] = useState("");
   const [goalToChangeTitle, setGoalToChangeTitle] = useState("");
-
   const [goalInput, setGoalInput] = useState("");
   const [descriptionInput, setDescriptionInput] = useState("");
-
   const [goals, setGoals] = useState<Goal[]>([]);
   const fetchGoals = async () => {
     const fetchedGoals = await getGoalsbyUser(authContext.loggedInUserId);
     setGoals(fetchedGoals);
   };
+  const isMobile = responsiveHelper();
 
   useEffect(() => {
     fetchGoals();
@@ -54,7 +57,7 @@ export default function HomeScreen() {
       <ThemedView style={styles.titleContainer}>
         <ThemedText style={styles.title}>
           {" "}
-          Willkommen zurück{" "}
+          Welcome Back{" "}
           {String(authContext.loggedInUser).charAt(0).toUpperCase() +
             String(authContext.loggedInUser).slice(1)}
         </ThemedText>
@@ -62,7 +65,6 @@ export default function HomeScreen() {
           <Button title="Log out" onPress={authContext.logOut} />
         </ThemedView>
       </ThemedView>
-
       {/* Create the "Create Goal" Modal  */}
       <BlurredModal
         visible={modalVisible}
@@ -144,8 +146,7 @@ export default function HomeScreen() {
                 deleteGoal(Number(goalToChange));
                 setGoalToChange("");
                 setGoalToChangeTitle;
-                window.location.reload();
-              }}
+              fetchGoals();}}
             />
           </ThemedView>
         </ThemedView>
@@ -164,12 +165,10 @@ export default function HomeScreen() {
           </ThemedView>
         </ThemedView>
 
-
-
         {goals?.map((goal) => (
           <View style={styles.goalItem}>
             <Pressable
-              style={{  flex: 1 }}
+              style={{ flex: 1 }}
               onPress={() => router.push(`/(subgoals)/${goal.id}`)}
             >
               <View style={{ margin: 8 }}>
@@ -179,102 +178,20 @@ export default function HomeScreen() {
                 </ThemedText>
               </View>
             </Pressable>
-            
-              <Pressable
-                style={styles.deleteButton}
-                onPress={() => {
-                  setGoalToChange(goal.id);
-                  setGoalToChangeTitle(goal.title);
-                  setconfirmDeletemodalVisible(true);
-                }}
-              >
-                <ThemedText>Delete {goal.title}</ThemedText>
-              </Pressable>
+
+            <Pressable
+              style={styles.deleteButton}
+              onPress={() => {
+                setGoalToChange(goal.id);
+                setGoalToChangeTitle(goal.title);
+                setconfirmDeletemodalVisible(true);
+              }}
+            >
+              <Feather name="trash-2" size={40} color="black" />
+            </Pressable>
           </View>
         ))}
       </ThemedView>
     </ParallaxScrollView>
   );
 }
-
-export const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 300,
-    width: 450,
-    position: "absolute",
-  },
-  modalContainer: {
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 20,
-    maxHeight: 400,
-    maxWidth: 400,
-    minWidth: 100,
-    borderRadius: 12,
-    borderColor: "#FFF",
-    borderWidth: 1,
-  },
-  input: {
-    height: 50,
-    borderColor: "#555",
-    borderWidth: 1,
-    borderRadius: 8,
-    marginBottom: 16,
-    paddingHorizontal: 12,
-    fontSize: 16,
-    color: "rgb(163, 163, 163)",
-    backgroundColor: "rgba(255, 255, 255, 0.1)",
-  },
-  goalsSection: {
-    padding: 16,
-    marginTop: 12,
-  },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 16,
-  },
-  goalItem: {
-    overflow: "hidden",
-    maxWidth: 400,
-    marginTop: 30,
-    marginBottom: 12,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: "#ddd",
-    backgroundColor: "rgba(255, 255, 255, 0.1)",
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-  goalTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 8,
-  },
-  goalDescription: {
-    fontSize: 14,
-    color: "rgb(120, 120, 120)",
-  },
-  title: {
-    fontSize: 30,
-    fontWeight: "bold",
-    marginTop: 16,
-  },
-  deleteButton: {
-    backgroundColor: "rgba(255, 0, 0, 0.42)",
-    textAlign: "center",
-    justifyContent: "center",
-    alignItems: "center",
-    flexWrap: "wrap",
-  },
-});

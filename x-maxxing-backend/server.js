@@ -218,6 +218,24 @@ app.delete("/goals/:id", (req, res) => {
   });
 });
 
+app.put("/goals/:id", (req, res) => {
+  const { id } = req.params;
+  const { title, description } = req.body;
+
+  const updateQuery = `UPDATE Goals SET title = ?, description = ? WHERE id = ?`;
+
+  db.query(updateQuery, [title, description, id], (err, result) => {
+    if (err) return res.status(500).json({ error: err.message });
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "Goal not found" });
+    }
+
+    res.json({ message: "Goal updated successfully", goalId: id });
+  });
+});
+
+
 app.get("/goals/:userId", (req, res) => {
   const userId = req.params.userId;
 
@@ -245,6 +263,27 @@ app.post("/subgoals", (req, res) => {
     }
   );
 });
+
+app.put("/subgoals/:id", (req, res) => {
+  const { id } = req.params;
+  const { title, description } = req.body;
+
+  db.query(
+    `UPDATE Steps SET title = ?, description = ? WHERE id = ?`,
+    [title, description, id],
+    (err, results) => {
+      if (err) return res.status(400).json({ error: err.message });
+
+      // Check if any row was actually updated
+      if (results.affectedRows === 0) {
+        return res.status(404).json({ error: "Step not found" });
+      }
+
+      res.json({ message: "Step updated successfully" });
+    }
+  );
+});
+
 
 // GET subgoals by goal ID
 app.get("/subgoals/:goalId", (req, res) => {

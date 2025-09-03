@@ -10,6 +10,7 @@ import { BlurredModal } from "@/components/blurModalComponent";
 import { router } from "expo-router";
 import { Colors } from "@/constants/Colors";
 import { deleteUser } from "@/utils/userManager";
+import { TextInput } from "react-native-gesture-handler";
 
 export default function HomeScreen() {
   const authContext = useContext(AuthContext);
@@ -29,7 +30,8 @@ export default function HomeScreen() {
       }
     >
       <ThemedView style={styles.titleContainer}>
-        <ThemedText style={styles.title}>Einstellungen</ThemedText>
+        <ThemedText style={styles.title}>
+          Settings</ThemedText>
         <ThemedView>
           <Button title="Log out" onPress={authContext.logOut} />
         </ThemedView>
@@ -78,13 +80,25 @@ export default function HomeScreen() {
           </ThemedView>
         </ThemedView>
       </BlurredModal>
-
-      <Button
-        title="Delete Account" 
-        color="red" 
-        onPress={() => {
-          setDeleteModalVisible(true);
-        }}/>
+      <ThemedView style={{ maxWidth: 400, marginBottom: 60 }}>
+        <ThemedView style={{marginBottom: 32}}>
+        <ThemedText style={styles.sectionTitle}>API Key</ThemedText>
+          <TextInput
+            placeholder="Enter your API Key"
+            style={styles.input}
+          ></TextInput>
+        </ThemedView>
+        <ThemedView>
+          <ThemedText style={styles.sectionTitle}>Account Settings</ThemedText>
+          <Button
+            title="Delete Account"
+            color="red"
+            onPress={() => {
+              setDeleteModalVisible(true);
+            }}
+          />
+        </ThemedView>
+      </ThemedView>
     </ParallaxScrollView>
   );
 }
@@ -158,9 +172,12 @@ export const styles = StyleSheet.create({
     color: "rgb(120, 120, 120)",
   },
   title: {
+    padding: 16,
+    paddingLeft: 0,
     fontSize: 30,
     fontWeight: "bold",
     marginTop: 16,
+    marginBottom: 32, 
   },
   deleteButton: {
     backgroundColor: "rgba(255, 0, 0, 0.42)",

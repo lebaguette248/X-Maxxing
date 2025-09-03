@@ -14,6 +14,7 @@ export async function subgoalGenerator(
     console.error("Goal title and description are required");
     return;
   }
+
   const prompt = `You are a helpful assistant that breaks large goals into smaller, actionable subgoals.
 Given the following goal and its description, return a numbered list of 2-7 short and clear subgoals that could help someone accomplish it.
 Goal: ${goalTitle},

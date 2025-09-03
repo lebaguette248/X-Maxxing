@@ -112,6 +112,7 @@ export async function createSubgoal(goalId: number, title: string, description: 
 
     if (!res.ok) throw new Error('Failed to create subgoal');
     const data = await res.json();
+    console.log('Subgoal created:', data);
     return data;
   } catch (error) {
     console.error('Error creating subgoal:', error);
@@ -132,6 +133,59 @@ export async function getGoalById(goalId: number):Promise<Goal | null> {
     return null;
   }
 }
+
+export async function updateSubGoal(
+  stepId: Number,
+  title: string,
+  description: string
+): Promise<boolean> {
+  try {
+    const response = await fetch(`${API_URL}/subgoals/${stepId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ title, description })
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to update subgoal");
+    }
+
+    return true;
+  } catch (error) {
+    console.error("Error updating subgoal:", error);
+    return false;
+  }
+}
+
+export async function updateGoal(
+  goalId: Number,
+  title: string,
+  description: string
+): Promise<boolean> {
+  try {
+    const response = await fetch(`${API_URL}/goals/${goalId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ title, description })
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to update goal");
+    }
+
+    return true;
+  } catch (error) {
+    console.error("Error updating goal:", error);
+    return false;
+  }
+}
+
+
+
 
 
 

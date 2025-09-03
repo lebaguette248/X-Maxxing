@@ -27,7 +27,7 @@ type Authstate = {
     username: string,
     email: string,
     password: string
-  ) => Promise<void>;
+  ) => Promise<void|String>;
   isReady: boolean;
 
   loggedInUser: string;
@@ -72,7 +72,11 @@ export function AuthProvider({ children }: PropsWithChildren) {
     }
   };
 
-  const logIn = async (username: string, password: string) => {
+  const logIn = async (username: string, password: string): Promise<String|void> => {
+    if (!username || !password) {
+      Alert.alert("Error", "Please fill in all fields");
+      return "Please fill in all fields";
+    }
     try {
       password = (await generateSHA256Hash(password)).toString();
       const res = await fetch(API_URL, {
@@ -133,15 +137,16 @@ export function AuthProvider({ children }: PropsWithChildren) {
     username: string,
     email: string,
     password: string
-  ) => {
+  ):Promise<void | String> => {
     try {
-      username = username.toLowerCase();
-      email = email.toLowerCase();
-      password = password;
+      username = username.toLowerCase().trim();
+      email = email.toLowerCase().trim();
+      password = password.trim();
       password = (await generateSHA256Hash(password)).toString();
 
       if (!username || !email || !password) {
         Alert.alert("Error", "Please fill in all fields");
+        return "Please fill in all fields";
       }
       const response = await fetch("http://localhost:3000/users", {
         method: "POST",
@@ -156,6 +161,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
       });
 
       if (!response.ok) {
+        
         throw new Error("Failed to create user");
       }
 
