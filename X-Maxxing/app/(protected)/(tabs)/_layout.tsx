@@ -37,15 +37,7 @@ export default function TabLayout() {
           ),
         }}
       />
-      <Tabs.Screen
-        name="explore"
-        options={{
-          title: "Explore",
-          tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="paperplane.fill" color={color} />
-          ),
-        }}
-      />
+      
       <Tabs.Screen
         name="settings"
         options={{
@@ -55,13 +47,10 @@ export default function TabLayout() {
           ),
         }}/>
         <Tabs.Screen
-        name="(subgoals)"
+        name="(subgoals)/[goalId]"
         options={{
           title: "Subgoals",
-          tabBarIcon: ({ color }) => (
-            <IconSymbol size={28} name="checkmark.circle.fill" color={color} />
-          ),
-        }}/>
+          href: null}}/>
     </Tabs>
   );
 }
