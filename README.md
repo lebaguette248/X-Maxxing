@@ -12,11 +12,23 @@ This Project has / is being built for the Gibb Module M306 and M183.
    npm install
    ```
 
-2. Start the app
+2. dublicate both .env-example files and call them .env
+3. Set every Variable in the .env files. For this you will need a gemini API Key
+4. Create a mysql Database and use credentials to fill out the backend .env
+5. Start the app
 
    ```bash
     npx expo start
    ```
+   
+6. Start the backend
+   ```bash
+   node server.js
+   ```
+
+7. Open http://localhost:8081 on your browser
+
+
 
 In the output, you'll find options to open the app in a
 
