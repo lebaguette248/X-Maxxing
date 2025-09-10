@@ -72,7 +72,7 @@ Inhaltlich umfasst der Konzeptbericht unter anderem die Projektziele, Rahmenbedi
 
 ### Fachliche Entitätstypen
 
-![Fachliche Entitätstypen](image3.png)
+![Fachliche Entitätstypen](image003.png)
 
 ## 3. Systemarchitektur
 
@@ -109,11 +109,11 @@ Inhaltlich umfasst der Konzeptbericht unter anderem die Projektziele, Rahmenbedi
 
 ### 3.1 Systemübersicht
 
-![Systemübersicht](image4.png)
+![Systemübersicht](image004.png)
 
 ### 3.2 Gliederung der Lösung
 
-![Gliederung der Lösung](image5.png)
+![Gliederung der Lösung](image005.png)
 
 ### 3.3 Technische Schnittstellen
 
@@ -127,7 +127,7 @@ Zusätzlich wird darauf geachtet, dass Sicherheitsaspekte wie die geschützte Sp
 
 ### 3.4 Benutzerschnittstelle
 
-![Benutzerschnittstelle](image6.png)
+![Benutzerschnittstelle](image006.png)
 
 ## 4. Testkonzept - (Testen anhand von User Stories)
 
