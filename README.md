@@ -33,6 +33,14 @@ Umfassendes Testkonzept basierend auf User Stories:
 - Systematisches Vorgehen für Qualitätssicherung
 - Strukturierte Testplanung und -durchführung
 
+### [📋 TestBericht](./TestBericht.md)
+Vollständige Testdokumentation mit Prozedur und Protokoll:
+- 16 strukturierte Testfälle mit erwarteten Ergebnissen
+- Klare Vorbereitungsschritte und Ausgangssituationen
+- Dokumentation der durchgeführten Tests und Ergebnisse
+- Teststatistiken und Erfolgsquote (62,5% erfolgreich)
+- Erkenntnisse und Empfehlungen für zukünftige Entwicklung
+
 ---
 
 ## 🖥️ Backend-Setup (Host-PC)
