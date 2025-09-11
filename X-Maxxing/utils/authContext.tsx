@@ -1,3 +1,4 @@
+
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
 import { Alert } from "react-native";
@@ -29,6 +30,7 @@ type Authstate = {
     password: string
   ) => Promise<void|String>;
   isReady: boolean;
+
 
   loggedInUser: string;
   loggedInUserId: Number;
@@ -69,6 +71,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
       await AsyncStorage.setItem(authStrogeKey, jsonValue);
     } catch (e) {
       console.error("Error storing auth state", e);
+
     }
   };
 
@@ -107,6 +110,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
     } catch (e) {
       console.error("Error logging in", e);
       Alert.alert("Login Failed", "Invalid username or password.");
+
     }
   };
 
@@ -116,6 +120,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
     storeAuthState({ isLoggedIn: false, loggedInUser: "", loggedInUserEmail });
     router.replace("/login");
   };
+
 
   useEffect(() => {
     const getAuthFromStorage = async () => {
@@ -146,6 +151,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
       email = email.toLowerCase().trim();
       password = password.trim();
       password = (await generateSHA256Hash(password)).toString();
+
 
       if (!username || !email || !password) {
         Alert.alert("Error", "Please fill in all fields");
