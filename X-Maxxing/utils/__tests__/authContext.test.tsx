@@ -13,6 +13,7 @@ jest.mock("expo-router", () => ({
 }));
 jest.mock("react-native", () => ({
   Alert: { alert: jest.fn() },
+  useColorScheme: jest.fn(() => "light"),
 }));
 jest.mock("expo-crypto", () => ({
   digestStringAsync: jest.fn(async (_alg, val) => `hashed-${val}`),
@@ -28,7 +29,10 @@ describe("generateSHA256Hash", () => {
 
 describe("AuthProvider functions", () => {
   let context: any;
+
   beforeEach(async () => {
+    // Clear all mocks before each test for isolation
+    jest.clearAllMocks();
     render(
       <AuthProvider>
         <AuthContext.Consumer>
@@ -39,7 +43,7 @@ describe("AuthProvider functions", () => {
         </AuthContext.Consumer>
       </AuthProvider>
     );
-    // Wait for context to initialize
+    // wait for context to initialize
     await act(async () => {});
   });
 
