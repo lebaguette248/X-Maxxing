@@ -1,4 +1,3 @@
-
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
 import { Alert } from "react-native";
@@ -30,7 +29,6 @@ type Authstate = {
     password: string
   ) => Promise<void|String>;
   isReady: boolean;
-
 
   loggedInUser: string;
   loggedInUserId: Number;
@@ -71,7 +69,6 @@ export function AuthProvider({ children }: PropsWithChildren) {
       await AsyncStorage.setItem(authStrogeKey, jsonValue);
     } catch (e) {
       console.error("Error storing auth state", e);
-
     }
   };
 
