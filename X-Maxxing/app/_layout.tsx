@@ -32,6 +32,5 @@ export default function RootLayout() {
         </AuthProvider>
       </GestureHandlerRootView>
     </ThemeProvider>
-
   );
 }
