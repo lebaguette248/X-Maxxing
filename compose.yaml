@@ -22,11 +22,12 @@ services:
       db:
         condition: service_healthy
     environment:
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_HOST: db
+      DB_DATABASE: ${MYSQL_DATABASE}
+      DB_USER: ${MYSQL_USER}
+      DB_PASSWORD: ${MYSQL_PASSWORD}
+      DB_HOST: db
+      DB_PORT: 3306
+      PORT: 3000
       # Add other envs required for backend
     ports:
       - "3000:3000"
@@ -46,7 +47,7 @@ services:
       - "19002:19002"
     volumes:
       - ./X-Maxxing:/app
-    command: npx expo start --tunnel
+    command: npx expo start --lan
 
 volumes:
   db_data:

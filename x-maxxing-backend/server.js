@@ -4,7 +4,7 @@ const mysql = require("mysql2");
 const cors = require("cors");
 
 const app = express();
-const PORT = process.env.DB_PORT;
+const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.use(cors());
