@@ -5,7 +5,7 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "myapp",
+    "scheme": "xmaxxing",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
@@ -13,12 +13,13 @@
     },
     "android": {
       "adaptiveIcon": {
+        "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      }
+      },
+      "edgeToEdgeEnabled": true,
+      "predictiveBackGestureEnabled": false
     },
     "web": {
-      "bundler": "metro",
       "output": "static",
       "favicon": "./assets/images/favicon.png"
     },
@@ -27,21 +28,19 @@
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#232323",
           "image": "./assets/images/logo.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#ffffff",
           "dark": {
-            "image": "./assets/images/logo.png",
             "backgroundColor": "#000000"
-          },
-          "imageWidth": 200
+          }
         }
-      ],
-      "expo-sqlite",
-      "expo-font",
-      "expo-web-browser"
+      ]
     ],
     "experiments": {
-      "typedRoutes": true
+      "typedRoutes": true,
+      "reactCompiler": true
     }
   }
 }
