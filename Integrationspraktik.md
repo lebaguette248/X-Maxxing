@@ -2,6 +2,10 @@
 ## Praktik
 Wir haben uns bei XMaxxing für die Integrationspraktik **Continuous Integration (CI)** unterstützt durch **Feature-Branches** entschieden.
 
+## CI beschrieben durch KI
+Continuous Integration (CI) bedeutet, dass Codeänderungen regelmäßig in ein zentrales Repository integriert und automatisch überprüft werden.
+Bei jedem Commit oder Pull Request laufen Prozesse wie Build, Tests und Code-Qualitätschecks automatisch ab. So werden Fehler früh erkannt und sichergestellt, dass die Anwendung jederzeit in einem funktionsfähigen Zustand bleibt.
+
 ## Warum diese Praktik
 XMaxxing hat eine getrennte Frontend-/Backend-Architektur, programmiert in Javascript und dessen Superset Typescript. Dies eignet sich perfekt für automatisierte Test und Build Vorgänge. Dabei ist eine Integration mit CI optimal, da man besagte Tests jedes mal vor dem Publishing ausführt und so jegliche Felher vermeidet.    
 
