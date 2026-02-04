@@ -1,10 +1,56 @@
-name: Xmaxxing code cleanup
+name: CI/CD - Code Cleanup
 
-on: 
+on:
   push:
-    branches:
-      - dev
+    branches: [ main, develop ]
+  pull_request: 
+    branches: [ main, develop ]
+
 jobs:
-  test:
-    runs-on: ubuntu-latest
+  code-quality:
+    name: Code Quality Check & Cleanup
+    runs-on:  ubuntu-latest
+    
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Setup Node. js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name:  Install dependencies
+        run: npm ci
+      
+      - name: Run ESLint
+        run: npm run lint
+        continue-on-error: true
+      
+      - name: Run Prettier
+        run: npm run format
+        continue-on-error: true
+      
+      - name: TypeScript type check
+        run: npm run type-check
+        continue-on-error: true
+      
+      - name: Run tests
+        run:  npm test
+        continue-on-error:  true
+      
+      - name:  Commit and push changes (if any)
+        run: |
+          git config --local user.email "github-actions[bot]@users. noreply.github.com"
+          git config --local user. name "github-actions[bot]"
+          git add -A
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "🤖 Auto-format code [skip ci]"
+            git push
+          fi
