@@ -15,7 +15,7 @@ services:
       timeout: 20s
       retries: 10
 
-  backend:
+  backend: 
     build: ./x-maxxing-backend
     depends_on:
       db:
@@ -47,6 +47,17 @@ services:
     volumes:
       - ./X-Maxxing:/app
     command: npx expo start --lan
+    depends_on:
+      - backend
+      
+  llm:
+    image: ollama/ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - llm_data:/root/.ollama
+    command: ollama run mistral
 
 volumes:
   db_data:
+  
